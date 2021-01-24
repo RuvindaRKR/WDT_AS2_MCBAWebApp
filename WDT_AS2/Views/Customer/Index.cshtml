@@ -15,15 +15,18 @@
             <th></th>
         </tr>
         @foreach(var account in Model.Accounts) {
-            <tr>
-                <td>@Html.DisplayFor(x => account.AccountNumber)</td>
-                <td>@Html.DisplayFor(x => account.AccountType)</td>
-                <td>@Html.DisplayFor(x => account.Balance)</td>
-                <td>
-                    <a class="btn btn-primary"
-                        asp-action="Deposit" asp-route-id="@account.AccountNumber">Deposit</a>
-                </td>
-            </tr>
+    <tr>
+        <td>@Html.DisplayFor(x => account.AccountNumber)</td>
+        <td>@Html.DisplayFor(x => account.AccountType)</td>
+        <td>@Html.DisplayFor(x => account.Balance)</td>
+        <td>
+            <a class="btn btn-primary"
+               asp-action="Deposit" asp-route-id="@account.AccountNumber">Deposit</a>
+            <a class="btn btn-primary"
+               asp-action="Withdraw" asp-route-id="@account.AccountNumber">Withdraw</a>
+        </td>
+
+    </tr>
         }
     </table>
 </div>
