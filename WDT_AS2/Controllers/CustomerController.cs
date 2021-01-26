@@ -132,6 +132,7 @@ namespace WDT_AS2.Models
 
         public ArrayList GetAllAccountNumbers(int id)
         {
+            var accounts = _context.Accounts.ToList();
             
             ArrayList _accountNumbers = new ArrayList();
             foreach (var customer in _context.Customers)

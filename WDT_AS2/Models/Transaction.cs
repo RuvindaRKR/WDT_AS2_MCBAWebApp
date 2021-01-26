@@ -12,26 +12,26 @@ namespace WDT_AS2.Models
         ServiceCharge = 4
     }
 
-    public class Transaction
+    public record Transaction
     {
-        public int TransactionID { get; set; }
+        public int TransactionID { get; init; }
 
-        public TransactionType TransactionType { get; set; }
+        public TransactionType TransactionType { get; init; }
 
         [ForeignKey("Account")]
-        public int AccountNumber { get; set; }
-        public virtual Account Account { get; set; }
+        public int AccountNumber { get; init; }
+        public virtual Account Account { get; init; }
 
         [ForeignKey("DestinationAccount")]
-        public int? DestinationAccountNumber { get; set; }
-        public virtual Account DestinationAccount { get; set; }
+        public int? DestinationAccountNumber { get; init; }
+        public virtual Account DestinationAccount { get; init; }
 
         [Column(TypeName = "money")]
-        public decimal Amount { get; set; }
+        public decimal Amount { get; init; }
 
         [StringLength(255)]
-        public string Comment { get; set; }
+        public string Comment { get; init; }
 
-        public DateTime TransactionTimeUtc { get; set; }
+        public DateTime TransactionTimeUtc { get; init; }
     }
 }

@@ -4,23 +4,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WDT_AS2.Models
 {
-    public class Customer
+    public record Customer
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CustomerID { get; set; }
+        public int CustomerID { get; init; }
 
         [Required, StringLength(50)]
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         [StringLength(50)]
-        public string Address { get; set; }
+        public string Address { get; init; }
 
         [StringLength(40)]
-        public string City { get; set; }
+        public string City { get; init; }
 
         [StringLength(4)]
-        public string PostCode { get; set; }
+        public string PostCode { get; init; }
 
-        public virtual List<Account> Accounts { get; set; }
+        public virtual List<Account> Accounts { get; init; }
     }
 }
