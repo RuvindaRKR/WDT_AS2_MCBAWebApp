@@ -10,7 +10,9 @@
         <form asp-action="Transfer">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                @Html.DropDownListFor(model => model.AccountNumber, ViewBag.AccountList as SelectList, "Select Account", new { @class = "form-control" })
+                <input id="transferAccount" name="AccountNumber" class="form-control" value="@ViewBag.transferAccount"
+                       data-val="true" data-val-number="The field Account must be a number."
+                       data-val-required="The Account Number field is required." />
                 @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
 
             </div>
