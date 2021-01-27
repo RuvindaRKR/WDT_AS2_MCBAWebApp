@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using X.PagedList;
 
 namespace WDT_AS2.Models
 {
@@ -212,7 +213,7 @@ namespace WDT_AS2.Models
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Statement()
+        public async Task<IActionResult> Statements()
         {
             // Lazy loading.
             // The Customer.Accounts property will be lazy loaded upon demand.
@@ -226,6 +227,19 @@ namespace WDT_AS2.Models
             return View(customer);
         }
 
-        public async Task<IActionResult> AccountStatements(int id) => View(await _context.Accounts.FindAsync(id));
+        public async Task<IActionResult> AccountStatement(int id, int? page = 1)
+        {
+            var customer = await _context.Customers.FindAsync(CustomerID);
+            ViewBag.Customer = customer;
+
+            var account = await _context.Accounts.FindAsync(id);
+            ViewBag.Account = account;
+
+
+            int pageSize = 4;
+            var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == id).ToPagedListAsync(page, pageSize);
+            
+            return View(transactionListPaged);
+        }
     }
 }
