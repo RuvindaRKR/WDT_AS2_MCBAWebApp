@@ -97,7 +97,7 @@ namespace WDT_AS2.Migrations
                     Amount = table.Column<decimal>(type: "money", nullable: false),
                     ScheduleDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Period = table.Column<int>(type: "int", nullable: false),
-                    TransactionTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

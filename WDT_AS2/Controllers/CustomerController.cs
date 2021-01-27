@@ -131,28 +131,10 @@ namespace WDT_AS2.Models
             return count;
         }
 
-        public ArrayList GetAllAccountNumbers(int id)
-        {
-            var accounts = _context.Accounts.ToList();
-            
-            ArrayList _accountNumbers = new ArrayList();
-            foreach (var customer in _context.Customers)
-            {
-                foreach (var account in customer.Accounts)
-                {
-                    if(account.AccountNumber != id)
-                        _accountNumbers.Add(account.AccountNumber);
-                }
-            }
-
-            return _accountNumbers;
-        }
-
         public async Task<IActionResult> Transfer(int id)
         {
-            //List<Account> accList = _context.Accounts.ToList();
-            //ViewBag.AccountList = new SelectList(accList, "AccountNumber");
-            ViewBag.AccountList = new SelectList(GetAllAccountNumbers(id), "AccountNumber");
+            var accList = _context.Accounts.Where(x => x.AccountNumber != id).Select(x => x.AccountNumber).ToList();
+            ViewBag.AccountList = new SelectList(accList, "AccountNumber");
             return View(await _context.Accounts.FindAsync(id));
         }
 
@@ -184,6 +166,7 @@ namespace WDT_AS2.Models
                 new Transaction
                 {
                     TransactionType = TransactionType.Transfer,
+                    DestinationAccountNumber = AccountNumber,
                     Amount = amount,
                     TransactionTimeUtc = DateTime.UtcNow
                 });
@@ -240,6 +223,59 @@ namespace WDT_AS2.Models
             var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == id).ToPagedListAsync(page, pageSize);
             
             return View(transactionListPaged);
+        }
+
+        public async Task<IActionResult> BillPay(int id)
+        {
+            var accList = _context.Payees.Select(x => x.PayeeID).ToList();
+            ViewBag.PayeeList = new SelectList(accList, "AccountNumber");
+            return View(await _context.Accounts.FindAsync(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BillPay(int id, int AccountNumber, decimal amount, DateTime PickedDate, Period Period)
+        {
+            var account = await _context.Accounts.FindAsync(id);
+            var payeeAccount = await _context.Payees.FindAsync(AccountNumber);
+
+            if (amount <= 0)
+                ModelState.AddModelError(nameof(amount), "Amount must be positive.");
+            if (amount.HasMoreThanTwoDecimalPlaces())
+                ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
+            if (amount > account.Balance)
+                ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
+            if (payeeAccount == null)
+                ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.AccountNumber = AccountNumber;
+                ViewBag.Amount = amount;
+                return View(account);
+            }
+
+            // Note this code could be moved out of the controller, e.g., into the Model.
+            account.Balance -= amount;
+            account.Transactions.Add(
+                new Transaction
+                {
+                    TransactionType = TransactionType.BillPay,
+                    Amount = amount,
+                    TransactionTimeUtc = DateTime.UtcNow
+                });
+
+            account.BillPays.Add(
+                new BillPay
+                {
+                    PayeeID = AccountNumber,
+                    Amount = amount,
+                    ScheduleDate = PickedDate,
+                    Period = Period,
+                    ModifyDate = DateTime.UtcNow
+                });
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

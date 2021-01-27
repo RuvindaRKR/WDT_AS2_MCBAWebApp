@@ -10,7 +10,7 @@ using WDT_AS2.Data;
 namespace WDT_AS2.Migrations
 {
     [DbContext(typeof(McbaContext))]
-    [Migration("20210127041837_InitialCreate")]
+    [Migration("20210127094116_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,6 +60,9 @@ namespace WDT_AS2.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("money");
 
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("PayeeID")
                         .HasColumnType("int");
 
@@ -67,9 +70,6 @@ namespace WDT_AS2.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ScheduleDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TransactionTimeUtc")
                         .HasColumnType("datetime2");
 
                     b.HasKey("BillPayID");

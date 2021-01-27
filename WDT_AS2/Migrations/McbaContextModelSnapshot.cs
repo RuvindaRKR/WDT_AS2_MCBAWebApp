@@ -58,6 +58,9 @@ namespace WDT_AS2.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("money");
 
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("PayeeID")
                         .HasColumnType("int");
 
@@ -65,9 +68,6 @@ namespace WDT_AS2.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ScheduleDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TransactionTimeUtc")
                         .HasColumnType("datetime2");
 
                     b.HasKey("BillPayID");
