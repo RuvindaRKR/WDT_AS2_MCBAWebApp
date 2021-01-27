@@ -211,5 +211,59 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> BillPay(int id)
+        {
+            //List<Account> accList = _context.Accounts.ToList();
+            //ViewBag.AccountList = new SelectList(accList, "AccountNumber");
+            ViewBag.PayeeList = new SelectList(GetAllAccountNumbers(id), "AccountNumber");
+            return View(await _context.Accounts.FindAsync(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BillPay(int id, int AccountNumber, decimal amount, DateTime PickedDate, Period Period)
+        {
+            var account = await _context.Accounts.FindAsync(id);
+            var payeeAccount = await _context.Payees.FindAsync(AccountNumber);
+
+            if (amount <= 0)
+                ModelState.AddModelError(nameof(amount), "Amount must be positive.");
+            if (amount.HasMoreThanTwoDecimalPlaces())
+                ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
+            if (amount > account.Balance)
+                ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
+            if (payeeAccount == null)
+                ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.AccountNumber = AccountNumber;
+                ViewBag.Amount = amount;
+                return View(account);
+            }
+
+            // Note this code could be moved out of the controller, e.g., into the Model.
+            account.Balance -= amount;
+            account.Transactions.Add(
+                new Transaction
+                {
+                    TransactionType = TransactionType.BillPay,
+                    Amount = amount,
+                    TransactionTimeUtc = DateTime.UtcNow
+                });
+
+            account.BillPays.Add(
+                new BillPay
+                {
+                    PayeeID = AccountNumber,
+                    Amount = amount,
+                    ScheduleDate = PickedDate,
+                    Period = Period,
+                    TransactionTimeUtc = DateTime.UtcNow
+                });
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
