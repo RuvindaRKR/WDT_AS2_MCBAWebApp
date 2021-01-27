@@ -10,7 +10,10 @@ namespace WDT_AS2.Models
         public int CustomerID { get; init; }
 
         [Required, StringLength(50)]
-        public string Name { get; init; }
+        public string CustomerName { get; init; }
+
+        [StringLength(11)]
+        public string TFN { get; init; }
 
         [StringLength(50)]
         public string Address { get; init; }
@@ -18,8 +21,14 @@ namespace WDT_AS2.Models
         [StringLength(40)]
         public string City { get; init; }
 
-        [StringLength(4)]
+        [StringLength(20)]
+        public string State { get; init; }
+
+        [StringLength(10)]
         public string PostCode { get; init; }
+
+        [StringLength(15)]
+        public string Phone { get; init; }
 
         public virtual List<Account> Accounts { get; init; }
     }

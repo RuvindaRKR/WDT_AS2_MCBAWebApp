@@ -12,6 +12,8 @@ namespace WDT_AS2.Data
         public DbSet<Login> Logins { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Payee> Payees { get; set; }
+        public DbSet<BillPay> BillPays { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -23,6 +25,9 @@ namespace WDT_AS2.Data
             builder.Entity<Transaction>().
                 HasOne(x => x.Account).WithMany(x => x.Transactions).HasForeignKey(x => x.AccountNumber);
             builder.Entity<Transaction>().HasCheckConstraint("CH_Transaction_Amount", "Amount > 0");
+            builder.Entity<BillPay>().
+                HasOne(x => x.Account).WithMany(x => x.BillPays).HasForeignKey(x => x.AccountNumber);
+            builder.Entity<BillPay>().HasCheckConstraint("CH_BillPay_Amount", "Amount > 0");
         }
     }
 }

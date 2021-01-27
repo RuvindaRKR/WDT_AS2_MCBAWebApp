@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,6 +27,10 @@ namespace WDT_AS2.Models
         [DataType(DataType.Currency)]
         public decimal Balance { get; set; }
 
+        public DateTime ModifyDate { get; init; }
+
         public virtual List<Transaction> Transactions { get; set; }
+
+        public virtual List<BillPay> BillPays { get; init; }
     }
 }

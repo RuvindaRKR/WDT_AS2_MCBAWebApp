@@ -28,7 +28,7 @@ namespace WDT_AS2.Models
 
             // Login customer.
             HttpContext.Session.SetInt32(nameof(Customer.CustomerID), login.CustomerID);
-            HttpContext.Session.SetString(nameof(Customer.Name), login.Customer.Name);
+            HttpContext.Session.SetString(nameof(Customer.CustomerName), login.Customer.CustomerName);
 
             return RedirectToAction("Index", "Customer");
         }

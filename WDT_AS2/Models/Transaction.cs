@@ -9,7 +9,8 @@ namespace WDT_AS2.Models
         Deposit = 1,
         Withdraw = 2,
         Transfer = 3,
-        ServiceCharge = 4
+        ServiceCharge = 4,
+        BillPay = 5
     }
 
     public record Transaction
