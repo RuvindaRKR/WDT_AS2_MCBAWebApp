@@ -136,6 +136,7 @@ namespace WDT_AS2.Data
                 {
                     TransactionType = TransactionType.Deposit,
                     AccountNumber = 4100,
+                    DestinationAccountNumber = 4101,
                     Amount = 100,
                     Comment = initialDeposit,
                     TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
@@ -144,6 +145,7 @@ namespace WDT_AS2.Data
                 {
                     TransactionType = TransactionType.Deposit,
                     AccountNumber = 4100,
+                    DestinationAccountNumber = 4200,
                     Amount = 100,
                     Comment = initialDeposit,
                     TransactionTimeUtc = DateTime.ParseExact("09/06/2020 09:00:00 AM", format, null)
@@ -213,7 +215,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)  
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)  
                 },
                 new BillPay
                 {
@@ -222,7 +224,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -231,7 +233,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("10/06/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -240,7 +242,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("12/12/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -249,7 +251,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("14/11/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -258,7 +260,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("16/10/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -267,7 +269,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("18/07/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -276,7 +278,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("20/08/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 },
                 new BillPay
                 {
@@ -285,7 +287,7 @@ namespace WDT_AS2.Data
                     Amount = 100,
                     ScheduleDate = DateTime.ParseExact("25/09/2020 08:00:00 PM", format, null),
                     Period = Period.OnceOff,
-                    TransactionTimeUtc = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
+                    ModifyDate = DateTime.ParseExact("08/06/2020 08:00:00 PM", format, null)
                 });
 
             context.SaveChanges();

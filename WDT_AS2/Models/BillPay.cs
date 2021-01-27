@@ -30,6 +30,6 @@ namespace WDT_AS2.Models
 
         public Period Period { get; init; }
 
-        public DateTime TransactionTimeUtc { get; init; }
+        public DateTime ModifyDate { get; init; }
     }
 }

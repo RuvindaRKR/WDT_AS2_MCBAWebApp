@@ -183,6 +183,7 @@ namespace WDT_AS2.Models
                 new Transaction
                 {
                     TransactionType = TransactionType.Transfer,
+                    DestinationAccountNumber = AccountNumber,
                     Amount = amount,
                     TransactionTimeUtc = DateTime.UtcNow
                 });
@@ -258,7 +259,7 @@ namespace WDT_AS2.Models
                     Amount = amount,
                     ScheduleDate = PickedDate,
                     Period = Period,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    ModifyDate = DateTime.UtcNow
                 });
 
             await _context.SaveChangesAsync();
