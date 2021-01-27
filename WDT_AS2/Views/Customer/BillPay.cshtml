@@ -11,9 +11,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label for="Amount" class="control-label">Payee Account</label>
-                <input id="transferAccount" name="AccountNumber" class="form-control" value="@ViewBag.payeeAccount"
-                       data-val="true" data-val-number="The field Account must be a number."
-                       data-val-required="The Account Number field is required." />
+                <select id="transferAccount" name="AccountNumber" class="form-control" value="@ViewBag.AccountNumber" asp-for="AccountNumber" asp-items="@ViewBag.PayeeList" required>
+                    <option value="">Select An Account</option>
+                </select>
                 @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
             </div>
             <div class="form-group">

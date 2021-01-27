@@ -130,28 +130,10 @@ namespace WDT_AS2.Models
             return count;
         }
 
-        public ArrayList GetAllAccountNumbers(int id)
-        {
-            var accounts = _context.Accounts.ToList();
-            
-            ArrayList _accountNumbers = new ArrayList();
-            foreach (var customer in _context.Customers)
-            {
-                foreach (var account in customer.Accounts)
-                {
-                    if(account.AccountNumber != id)
-                        _accountNumbers.Add(account.AccountNumber);
-                }
-            }
-
-            return _accountNumbers;
-        }
-
         public async Task<IActionResult> Transfer(int id)
         {
-            //List<Account> accList = _context.Accounts.ToList();
-            //ViewBag.AccountList = new SelectList(accList, "AccountNumber");
-            ViewBag.AccountList = new SelectList(GetAllAccountNumbers(id), "AccountNumber");
+            var accList = _context.Accounts.Where(x => x.AccountNumber != id).Select(x => x.AccountNumber).ToList();
+            ViewBag.AccountList = new SelectList(accList, "AccountNumber");
             return View(await _context.Accounts.FindAsync(id));
         }
 
@@ -215,9 +197,8 @@ namespace WDT_AS2.Models
 
         public async Task<IActionResult> BillPay(int id)
         {
-            //List<Account> accList = _context.Accounts.ToList();
-            //ViewBag.AccountList = new SelectList(accList, "AccountNumber");
-            ViewBag.PayeeList = new SelectList(GetAllAccountNumbers(id), "AccountNumber");
+            var accList = _context.Payees.Select(x => x.PayeeID).ToList();
+            ViewBag.PayeeList = new SelectList(accList, "AccountNumber");
             return View(await _context.Accounts.FindAsync(id));
         }
 
