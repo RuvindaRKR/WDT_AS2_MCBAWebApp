@@ -167,7 +167,7 @@ namespace WDT_AS2.Models
             if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if (amount > account.Balance)
-                ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
+                ModelState.AddModelError(nameof(amount), "Insufficient Funds.");
             if (transferAccount == null)
                 ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
             if (!ModelState.IsValid)
@@ -225,5 +225,7 @@ namespace WDT_AS2.Models
 
             return View(customer);
         }
+
+        public async Task<IActionResult> AccountStatements(int id) => View(await _context.Accounts.FindAsync(id));
     }
 }
