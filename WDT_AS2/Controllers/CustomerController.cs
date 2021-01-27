@@ -211,5 +211,19 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Statement()
+        {
+            // Lazy loading.
+            // The Customer.Accounts property will be lazy loaded upon demand.
+            var customer = await _context.Customers.FindAsync(CustomerID);
+
+            // OR
+            // Eager loading.
+            //var customer = await _context.Customers.Include(x => x.Accounts).
+            //    FirstOrDefaultAsync(x => x.CustomerID == _customerID);
+
+            return View(customer);
+        }
     }
 }
