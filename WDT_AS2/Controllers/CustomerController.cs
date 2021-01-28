@@ -288,7 +288,7 @@ namespace WDT_AS2.Models
         [HttpPost]
         public async Task<IActionResult> ModifyBillPay(int billpayID)
         {
-            var billpay = await _context.BillPays.FindAsync(billpayID);
+            var billpay = await _context.BillPays.FindAsync(billpayID); // <- this part is always null
             var payeeName = _context.Payees.Where(x => x.PayeeID == billpay.PayeeID).Select(x => x.PayeeName);
             ViewBag.PayeeName = payeeName;
             var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
