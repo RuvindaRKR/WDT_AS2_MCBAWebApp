@@ -20,6 +20,9 @@ namespace WDT_AS2.Models
         [Column(TypeName = "money")]
         public decimal Amount { get; init; }
 
+        [StringLength(20)]
+        public string Status { get; init; }
+
         public DateTime ScheduleDate { get; init; }
 
         public Period Period { get; init; }

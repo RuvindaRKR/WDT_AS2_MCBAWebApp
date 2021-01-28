@@ -35,7 +35,7 @@ namespace WDT_AS2.Models
 
             if(amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
-            if(amount.HasMoreThanTwoDecimalPlaces())
+            if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if(!ModelState.IsValid)
             {
@@ -65,9 +65,13 @@ namespace WDT_AS2.Models
         {
             var account = await _context.Accounts.FindAsync(id);
             var customer = await _context.Customers.FindAsync(account.CustomerID);
+            var transactionCount = _context.Transactions.Where(x => x.TransactionType == TransactionType.Transfer || x.TransactionType == TransactionType.Withdraw).Count();
+
 
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
+            if (amount > account.Balance)
+                ModelState.AddModelError(nameof(amount), "Insufficient Funds.");
             if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if (!ModelState.IsValid)
@@ -86,7 +90,7 @@ namespace WDT_AS2.Models
                     TransactionTimeUtc = DateTime.UtcNow
                 });
 
-            if (GetTransactionCount(customer) > 4)
+            if (transactionCount > 4)
             {
                 account.Transactions.Add(
                 new Transaction
@@ -101,23 +105,7 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
-
-        public int GetTransactionCount(Customer customer)
-        {
-            int count = 0;
-
-            foreach(var account in customer.Accounts)
-            {
-                foreach (var transaction in account.Transactions)
-                {
-                    if ((transaction.TransactionType == TransactionType.Transfer || transaction.TransactionType == TransactionType.Withdraw) && transaction.DestinationAccountNumber != transaction.AccountNumber)
-                    {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
+ 
 
         public async Task<IActionResult> Transfer(int id)
         {
@@ -132,6 +120,7 @@ namespace WDT_AS2.Models
             var account = await _context.Accounts.FindAsync(id);
             var transferAccount = await _context.Accounts.FindAsync(AccountNumber);
             var customer = await _context.Customers.FindAsync(account.CustomerID);
+            var transactionCount = _context.Transactions.Where(x => x.TransactionType == TransactionType.Transfer || x.TransactionType == TransactionType.Withdraw).Count();
 
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
@@ -168,7 +157,7 @@ namespace WDT_AS2.Models
                     TransactionTimeUtc = DateTime.UtcNow
                 });
 
-            if (GetTransactionCount(customer) > 4)
+            if (transactionCount > 4)
             {
                 account.Transactions.Add(
                 new Transaction
