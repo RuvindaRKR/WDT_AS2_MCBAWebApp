@@ -225,12 +225,15 @@ namespace WDT_AS2.Models
         {
             var account = await _context.Accounts.FindAsync(MyAccountNumber);
             var payeeAccount = await _context.Payees.FindAsync(PayeeAccountNumber);
+            int chAmount = 0;
 
+            if (account.AccountType == AccountType.Checking)
+                chAmount = 200;
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
             if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
-            if (amount > account.Balance)
+            if (amount > (account.Balance + chAmount))
                 ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
             if (!ModelState.IsValid)
             {
@@ -281,14 +284,41 @@ namespace WDT_AS2.Models
             return View(billPayListPaged);
         }
 
-        public async Task<IActionResult> ModifyBillPay(int BillPayID, int Amount, DateTime ScheduleDate, Period Period)
+        public async Task<IActionResult> ModifyBillPay(int id) => View(await _context.BillPays.FindAsync(id));
+       
+        //public async Task<IActionResult> ModifyBillPay(BillPay billPay)
+        [HttpPost]
+        public async Task<IActionResult> ModifyBillPay(int BillPayID, int AccountNumber, decimal Amount, DateTime ScheduleDate, Period Period)
         {
             var billpay = await _context.BillPays.FindAsync(BillPayID);
-            var payeeName = _context.Payees.Where(x => x.PayeeID == billpay.PayeeID).Select(x => x.PayeeName);
-            ViewBag.PayeeName = payeeName;
-            var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
-            ViewBag.AccList = new SelectList(accList, "AccountNumber");
-            return View(billpay);
+            var account = await _context.Accounts.FindAsync(AccountNumber);
+            int chAmount = 0;
+
+            if (account.AccountType == AccountType.Checking)
+                chAmount = 200;
+            if (Amount <= 0)
+                ModelState.AddModelError(nameof(Amount), "Amount must be positive.");
+            if (Amount.HasMoreThanTwoDecimalPlaces())
+                ModelState.AddModelError(nameof(Amount), "Amount cannot have more than 2 decimal places.");
+            if (Amount > (account.Balance + chAmount))
+                ModelState.AddModelError(nameof(Amount), "Insufficeint Funds.");
+            if (DateTime.Compare(DateTime.UtcNow, ScheduleDate) > 0)
+                ModelState.AddModelError(nameof(ScheduleDate), "Select a time in the future.");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Amount = Amount;
+                ViewBag.ScheduleDate = ScheduleDate;
+                return View(billpay);
+            }
+
+            billpay.Amount = Amount;
+            billpay.ScheduleDate = ScheduleDate;
+            billpay.Period = Period;
+            billpay.ModifyDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
