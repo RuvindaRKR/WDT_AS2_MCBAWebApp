@@ -10,8 +10,8 @@ using WDT_AS2.Data;
 namespace WDT_AS2.Migrations
 {
     [DbContext(typeof(McbaContext))]
-    [Migration("20210128152736_InitialCreate1")]
-    partial class InitialCreate1
+    [Migration("20210128173113_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,9 +72,8 @@ namespace WDT_AS2.Migrations
                     b.Property<DateTime>("ScheduleDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("BillPayID");
 

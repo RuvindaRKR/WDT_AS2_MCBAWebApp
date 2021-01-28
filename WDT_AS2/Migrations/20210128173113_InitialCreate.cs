@@ -95,6 +95,7 @@ namespace WDT_AS2.Migrations
                     AccountNumber = table.Column<int>(type: "int", nullable: false),
                     PayeeID = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "money", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     ScheduleDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Period = table.Column<int>(type: "int", nullable: false),
                     ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: false)

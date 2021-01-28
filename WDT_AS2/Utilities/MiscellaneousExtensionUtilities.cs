@@ -12,4 +12,11 @@
         Quaterly = 2,
         OnceOff = 3,
     }
+
+    public enum Status
+    {
+        Pending = 1,
+        Complete = 2,
+        Failed = 3
+    }
 }

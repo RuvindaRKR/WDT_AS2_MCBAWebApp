@@ -21,6 +21,7 @@
                 <th>@Html.DisplayNameFor(x => Model[0].Amount):</th>
                 <th>@Html.DisplayNameFor(x => Model[0].ScheduleDate):</th>
                 <th>@Html.DisplayNameFor(x => Model[0].Period):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Status):</th>
             </tr>
             @foreach (var billpay in Model)
             {
@@ -33,6 +34,7 @@
                     <td>@Html.DisplayFor(x => billpay.Amount)</td>
                     <td>@Html.DisplayFor(x => billpay.ScheduleDate)</td>
                     <td>@Html.DisplayFor(x => billpay.Period)</td>
+                    <td>@Html.DisplayFor(x => billpay.Status)</td>
                 </tr>
             }
         </table>
