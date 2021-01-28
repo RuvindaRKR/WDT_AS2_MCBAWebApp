@@ -9,6 +9,7 @@ namespace WDT_AS2.ViewModels
 {
     public class ScheduledPaymentsViewModel
     {
+        public int BillPayID { get; init; }
         public string PayeeName { get; set; }
 
         [Column(TypeName = "money")]

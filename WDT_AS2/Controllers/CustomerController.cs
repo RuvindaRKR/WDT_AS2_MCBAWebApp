@@ -291,6 +291,7 @@ namespace WDT_AS2.Models
                          where (a.CustomerID == CustomerID)
                          select new ScheduledPaymentsViewModel
                          {
+                             BillPayID = b.BillPayID,
                              PayeeName = p.PayeeName,
                              Amount = b.Amount,
                              ScheduleDate = b.ScheduleDate,
@@ -302,5 +303,10 @@ namespace WDT_AS2.Models
 
             return View(billPayListPaged);
         }
+
+        //public async Task<IActionResult> ModifyBillPay(int billpayID)
+        //{
+
+        //}
     }
 }

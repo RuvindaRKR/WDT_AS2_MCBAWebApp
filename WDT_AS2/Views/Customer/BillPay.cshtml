@@ -4,32 +4,33 @@
 }
 
 <h1 class="display-4">Account Number @Model.AccountNumber (@Model.AccountType)</h1>
-
+<br />
+<br />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="BillPay">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label for="Amount" class="control-label">Payee Account</label>
+                <label for="Amount" class="control-label">Payee Account:</label>
                 <select id="transferAccount" name="AccountNumber" class="form-control" value="@ViewBag.AccountNumber" asp-for="AccountNumber" asp-items="@ViewBag.PayeeList" required>
                     <option value="">Select An Account</option>
                 </select>
                 @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
             </div>
             <div class="form-group">
-                <label for="Amount" class="control-label">Amount</label>
-                <input id="Amount" name="Amount" class="form-control" value="@ViewBag.Amount?.ToString("0.00")"
+                <label for="Amount" class="control-label">Amount:</label>
+                <input id="Amount" name="Amount" class="form-control" placeholder="Enter amount here" value="@ViewBag.Amount?.ToString("0.00")"
                        data-val="true" data-val-number="The field Amount must be a number."
                        data-val-required="The Amount field is required." />
                 @Html.ValidationMessage("Amount", new { @class = "text-danger" })
             </div>
             <div class="form-group">
-                <label for="Date" class="control-label">Shedule Date</label>
-                <input id="PickedDate" name="PickedDate" class="form-control" type="datetime-local" value="@ViewBag.DatePicked" required/>
+                <label for="Date" class="control-label">Schedule Date:</label>
+                <input id="PickedDate" name="PickedDate" class="form-control" type="datetime-local" value="@ViewBag.DatePicked" required />
                 @Html.ValidationMessage("Date", new { @class = "text-danger" })
             </div>
             <div class="form-group">
-                <label for="Period" class="control-label">Period</label>
+                <label for="Period" class="control-label">Period:</label>
                 <select id="Period" name="Period" class="form-control" value="@ViewBag.DatePicked" required>
                     <option value="OnceOff">One-Off</option>
                     <option disabled>Monthly</option>
@@ -46,7 +47,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to Accounts</a>
+    <a asp-action="Index">Back to My Accounts</a>
 </div>
 
 @section Scripts {

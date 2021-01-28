@@ -11,10 +11,12 @@
 
 <div>
     <h1 class="display-4"> Statement for Account @account.AccountNumber (@account.AccountType)</h1>
+    <br />
+    <br />
     <h4>
         Account Balance: $@account.Balance.ToString("0.00")
     </h4>
-
+    <br />
     <h3>Your Transactions</h3>
     <div>
         <table class="table">
@@ -46,6 +48,6 @@
     </div>
 
     <div>
-        <a asp-action="Statements">Back to Accounts</a>
+        <a asp-action="Statements">Back to My Statements</a>
     </div>
 </div>

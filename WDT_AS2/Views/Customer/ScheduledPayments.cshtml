@@ -10,7 +10,8 @@
 
 <div>
     <h1 class="display-4"> Scheduled Payments for @customer.CustomerName</h1>
-
+    <br />
+    <br />
     <h3>Your Transactions</h3>
     <div>
         <table class="table">
@@ -24,7 +25,10 @@
             @foreach (var billpay in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
+                    <td>
+                        <a class="btn btn-primary"
+                           @*asp-action="ModifyBillPay" asp-route-id="billpay.BillPayID"*@>Modify</a>
+                    </td>
                     <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
                     <td>@Html.DisplayFor(x => billpay.Amount)</td>
                     <td>@Html.DisplayFor(x => billpay.ScheduleDate)</td>
