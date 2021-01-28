@@ -1,50 +1,42 @@
 ﻿@model BillPay
 @{
-    ViewData["Title"] = "Modify BillPay";
+    ViewData["Title"] = "Modify_BillPay";
     var payeeName = ViewBag.PayeeName;
     var accList = ViewBag.AccList;
 }
 
-<h3>Bill Pays</h3>
+<h3>Modify Bill Pay</h3>
+<hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="ScheduledPayments">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="BillPayID" />
+            <input type="hidden" asp-for="PayeeID" />
+            <input type="hidden" asp-for="BillPayID" />
+            <input type="hidden" asp-for="BillPayID" />
             <div class="form-group">
-                <label for="Amount" class="control-label">Your Account</label>
-                <select id="myAccount" name="MyAccountNumber" class="form-control" asp-for="AccountNumber" asp-items="accList" required>
-                    <option value="">Select An Account</option>
-                </select>
-                @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Amount" class="control-label">Payee Account</label>
-                <div>@Model.PayeeID - @payeeName</div>
+                <label asp-for="ScheduleDate" class="control-label"></label>
+                <input asp-for="ScheduleDate" type="datetime-local" class="form-control" />
+                <span asp-validation-for="ScheduleDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Amount" class="control-label">Amount</label>
-                <input id="Amount" name="Amount" class="form-control" placeholder="Enter amount here" value="@ViewBag.Amount?.ToString("0.00")"
-                       data-val="true" data-val-number="The field Amount must be a number."
-                       data-val-required="The Amount field is required." />
-                @Html.ValidationMessage("Amount", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                <label for="Date" class="control-label">Schedule Date</label>
-                <input id="PickedDate" name="PickedDate" class="form-control" type="datetime-local" value="@ViewBag.DatePicked" required />
-                @Html.ValidationMessage("Date", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                <label for="Period" class="control-label">Period</label>
-                <select id="Period" name="Period" class="form-control" value="@ViewBag.DatePicked" required>
+                <label asp-for="Period" class="control-label"></label>
+                <select id="Period" name="Period" class="form-control" required>
                     <option value="OnceOff">One-Off</option>
                     <option disabled>Monthly</option>
                     <option disabled>Quarterly</option>
                     <option disabled>Annually</option>
                 </select>
-                @Html.ValidationMessage("Period", new { @class = "text-danger" })
+                <span asp-validation-for="Period" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="BillPay" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
