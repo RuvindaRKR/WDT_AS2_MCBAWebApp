@@ -26,8 +26,7 @@
             {
                 <tr>
                     <td>
-                        <a class="btn btn-primary"
-                           @*asp-action="ModifyBillPay" asp-route-id="billpay.BillPayID"*@>Modify</a>
+                    <a class="btn btn-primary" asp-action="ModifyBillPay" asp-route-id="@billpay.BillPayID">Modify</a>
                     </td>
                     <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
                     <td>@Html.DisplayFor(x => billpay.Amount)</td>

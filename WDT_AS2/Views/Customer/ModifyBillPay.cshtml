@@ -1,6 +1,8 @@
-﻿@model Account
+﻿@model BillPay
 @{
     ViewData["Title"] = "Modify BillPay";
+    var payeeName = ViewBag.PayeeName;
+    var accList = ViewBag.AccList;
 }
 
 <h3>Bill Pays</h3>
@@ -10,17 +12,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label for="Amount" class="control-label">Your Account</label>
-                <select id="myAccount" name="MyAccountNumber" class="form-control" asp-for="AccountNumber" asp-items="@ViewBag.AccList" required>
+                <select id="myAccount" name="MyAccountNumber" class="form-control" asp-for="AccountNumber" asp-items="accList" required>
                     <option value="">Select An Account</option>
                 </select>
                 @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <label for="Amount" class="control-label">Payee Account</label>
-                <select id="transferAccount" name="PayeeAccountNumber" class="form-control" asp-for="AccountNumber" asp-items="@ViewBag.PayeeList" required>
-                    <option value="">Select An Account</option>
-                </select>
-                @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
+                <div>@Model.PayeeID - @payeeName</div>
             </div>
             <div class="form-group">
                 <label for="Amount" class="control-label">Amount</label>

@@ -11,5 +11,6 @@
         Monthly = 1,
         Quaterly = 2,
         OnceOff = 3,
+        Anually = 4
     }
 }

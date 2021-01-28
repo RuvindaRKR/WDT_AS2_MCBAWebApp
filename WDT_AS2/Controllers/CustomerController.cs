@@ -285,9 +285,15 @@ namespace WDT_AS2.Models
             return View(billPayListPaged);
         }
 
-        //public async Task<IActionResult> ModifyBillPay(int billpayID)
-        //{
-
-        //}
+        [HttpPost]
+        public async Task<IActionResult> ModifyBillPay(int billpayID)
+        {
+            var billpay = await _context.BillPays.FindAsync(billpayID);
+            var payeeName = _context.Payees.Where(x => x.PayeeID == billpay.PayeeID).Select(x => x.PayeeName);
+            ViewBag.PayeeName = payeeName;
+            var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
+            return View(billpay);
+        }
     }
 }
