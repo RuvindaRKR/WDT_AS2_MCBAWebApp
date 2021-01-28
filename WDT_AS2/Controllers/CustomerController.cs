@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WDT_AS2.Data;
-using WDT_AS2.Models;
+using WDT_AS2.ViewModels;
 using WDT_AS2.Utilities;
 using WDT_AS2.Filters;
 using System.Collections;
@@ -24,19 +24,7 @@ namespace WDT_AS2.Models
 
         public CustomerController(McbaContext context) => _context = context;
 
-        public async Task<IActionResult> Index()
-        {
-            // Lazy loading.
-            // The Customer.Accounts property will be lazy loaded upon demand.
-            var customer = await _context.Customers.FindAsync(CustomerID);
-
-            // OR
-            // Eager loading.
-            //var customer = await _context.Customers.Include(x => x.Accounts).
-            //    FirstOrDefaultAsync(x => x.CustomerID == _customerID);
-
-            return View(customer);
-        }
+        public async Task<IActionResult> Index() => View(await _context.Customers.FindAsync(CustomerID));
 
         public async Task<IActionResult> Deposit(int id) => View(await _context.Accounts.FindAsync(id));
 
@@ -196,47 +184,43 @@ namespace WDT_AS2.Models
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Statements()
+        public async Task<IActionResult> Statements() 
         {
-            // Lazy loading.
-            // The Customer.Accounts property will be lazy loaded upon demand.
-            var customer = await _context.Customers.FindAsync(CustomerID);
-
-            // OR
-            // Eager loading.
-            //var customer = await _context.Customers.Include(x => x.Accounts).
-            //    FirstOrDefaultAsync(x => x.CustomerID == _customerID);
-
-            return View(customer);
+            var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
+            return View();
         }
 
-        public async Task<IActionResult> AccountStatement(int id, int? page = 1)
+
+        public async Task<IActionResult> AccountStatement(int MyAccountNumber, int? page = 1)
         {
             var customer = await _context.Customers.FindAsync(CustomerID);
             ViewBag.Customer = customer;
 
-            var account = await _context.Accounts.FindAsync(id);
+            var account = await _context.Accounts.FindAsync(MyAccountNumber);
             ViewBag.Account = account;
 
 
             int pageSize = 4;
-            var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == id).ToPagedListAsync(page, pageSize);
+            var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == MyAccountNumber).ToPagedListAsync(page, pageSize);
             
             return View(transactionListPaged);
         }
 
-        public async Task<IActionResult> BillPay(int id)
+        public async Task<IActionResult> BillPay()
         {
-            var accList = _context.Payees.Select(x => x.PayeeID).ToList();
-            ViewBag.PayeeList = new SelectList(accList, "AccountNumber");
-            return View(await _context.Accounts.FindAsync(id));
+            var payeeList = await _context.Payees.Select(x => x.PayeeID).ToListAsync();
+            ViewBag.PayeeList = new SelectList(payeeList, "AccountNumber");
+            var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> BillPay(int id, int AccountNumber, decimal amount, DateTime PickedDate, Period Period)
+        public async Task<IActionResult> BillPay(int MyAccountNumber, int PayeeAccountNumber, decimal amount, DateTime PickedDate, Period Period)
         {
-            var account = await _context.Accounts.FindAsync(id);
-            var payeeAccount = await _context.Payees.FindAsync(AccountNumber);
+            var account = await _context.Accounts.FindAsync(MyAccountNumber);
+            var payeeAccount = await _context.Payees.FindAsync(PayeeAccountNumber);
 
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
@@ -244,11 +228,8 @@ namespace WDT_AS2.Models
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if (amount > account.Balance)
                 ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
-            if (payeeAccount == null)
-                ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
             if (!ModelState.IsValid)
             {
-                ViewBag.AccountNumber = AccountNumber;
                 ViewBag.Amount = amount;
                 return View(account);
             }
@@ -266,7 +247,7 @@ namespace WDT_AS2.Models
             account.BillPays.Add(
                 new BillPay
                 {
-                    PayeeID = AccountNumber,
+                    PayeeID = PayeeAccountNumber,
                     Amount = amount,
                     ScheduleDate = PickedDate,
                     Period = Period,
@@ -277,5 +258,36 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> ScheduledPayments(int? page = 1)
+        {
+            var customer = await _context.Customers.FindAsync(CustomerID);
+            ViewBag.Customer = customer;
+
+            var query =  from b in _context.BillPays
+                         join a in _context.Accounts
+                             on b.AccountNumber equals a.AccountNumber
+                         join p in _context.Payees
+                             on b.PayeeID equals p.PayeeID
+                         where (a.CustomerID == CustomerID)
+                         select new ScheduledPaymentsViewModel
+                         {
+                             BillPayID = b.BillPayID,
+                             PayeeName = p.PayeeName,
+                             Amount = b.Amount,
+                             ScheduleDate = b.ScheduleDate,
+                             Period = b.Period
+                         };
+
+            int pageSize = 4;
+            var billPayListPaged = await query.ToPagedListAsync(page, pageSize);
+
+            return View(billPayListPaged);
+        }
+
+        //public async Task<IActionResult> ModifyBillPay(int billpayID)
+        //{
+
+        //}
     }
 }

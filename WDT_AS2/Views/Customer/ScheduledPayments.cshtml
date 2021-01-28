@@ -1,0 +1,47 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@using WDT_AS2.ViewModels 
+@model IPagedList<ScheduledPaymentsViewModel>
+@{
+    ViewData["Title"] = "Scheduled Payments";
+    var customer = (Customer)ViewBag.Customer;
+}
+
+<div>
+    <h1 class="display-4"> Scheduled Payments for @customer.CustomerName</h1>
+    <br />
+    <br />
+    <h3>Your Transactions</h3>
+    <div>
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>@Html.DisplayNameFor(x => Model[0].PayeeName):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Amount):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].ScheduleDate):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Period):</th>
+            </tr>
+            @foreach (var billpay in Model)
+            {
+                <tr>
+                    <td>
+                        <a class="btn btn-primary"
+                           @*asp-action="ModifyBillPay" asp-route-id="billpay.BillPayID"*@>Modify</a>
+                    </td>
+                    <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
+                    <td>@Html.DisplayFor(x => billpay.Amount)</td>
+                    <td>@Html.DisplayFor(x => billpay.ScheduleDate)</td>
+                    <td>@Html.DisplayFor(x => billpay.Period)</td>
+                </tr>
+            }
+        </table>
+
+        @Html.PagedListPager(Model, page => Url.Action("ScheduledPayments", new { page }),
+            new PagedListRenderOptions
+            {
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" }
+            })
+    </div>
+</div>
