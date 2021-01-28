@@ -24,19 +24,7 @@ namespace WDT_AS2.Models
 
         public CustomerController(McbaContext context) => _context = context;
 
-        public async Task<IActionResult> Index()
-        {
-            // Lazy loading.
-            // The Customer.Accounts property will be lazy loaded upon demand.
-            var customer = await _context.Customers.FindAsync(CustomerID);
-
-            // OR
-            // Eager loading.
-            //var customer = await _context.Customers.Include(x => x.Accounts).
-            //    FirstOrDefaultAsync(x => x.CustomerID == _customerID);
-
-            return View(customer);
-        }
+        public async Task<IActionResult> Index() => View(await _context.Customers.FindAsync(CustomerID));
 
         public async Task<IActionResult> Deposit(int id) => View(await _context.Accounts.FindAsync(id));
 
@@ -196,19 +184,7 @@ namespace WDT_AS2.Models
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Statements()
-        {
-            // Lazy loading.
-            // The Customer.Accounts property will be lazy loaded upon demand.
-            var customer = await _context.Customers.FindAsync(CustomerID);
-
-            // OR
-            // Eager loading.
-            //var customer = await _context.Customers.Include(x => x.Accounts).
-            //    FirstOrDefaultAsync(x => x.CustomerID == _customerID);
-
-            return View(customer);
-        }
+        public async Task<IActionResult> Statements() => View(await _context.Customers.FindAsync(CustomerID));
 
         public async Task<IActionResult> AccountStatement(int id, int? page = 1)
         {
@@ -227,16 +203,18 @@ namespace WDT_AS2.Models
 
         public async Task<IActionResult> BillPay(int id)
         {
-            var accList = _context.Payees.Select(x => x.PayeeID).ToList();
-            ViewBag.PayeeList = new SelectList(accList, "AccountNumber");
+            var payeeList = _context.Payees.Select(x => x.PayeeID).ToList();
+            ViewBag.PayeeList = new SelectList(payeeList, "AccountNumber");
+            var accList = _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToList();
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
             return View(await _context.Accounts.FindAsync(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> BillPay(int id, int AccountNumber, decimal amount, DateTime PickedDate, Period Period)
+        public async Task<IActionResult> BillPay(int MyAccountNumber, int PayeeAccountNumber, decimal amount, DateTime PickedDate, Period Period)
         {
-            var account = await _context.Accounts.FindAsync(id);
-            var payeeAccount = await _context.Payees.FindAsync(AccountNumber);
+            var account = await _context.Accounts.FindAsync(MyAccountNumber);
+            var payeeAccount = await _context.Payees.FindAsync(PayeeAccountNumber);
 
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
@@ -244,11 +222,14 @@ namespace WDT_AS2.Models
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if (amount > account.Balance)
                 ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
+            if (account == null)
+                ModelState.AddModelError(nameof(MyAccountNumber), "Invalid Account ID.");
             if (payeeAccount == null)
-                ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
+                ModelState.AddModelError(nameof(PayeeAccountNumber), "Invalid Account ID.");
             if (!ModelState.IsValid)
             {
-                ViewBag.AccountNumber = AccountNumber;
+                ViewBag.MyAccountNumber = MyAccountNumber;
+                ViewBag.PayeeAccountNumber = PayeeAccountNumber;
                 ViewBag.Amount = amount;
                 return View(account);
             }
@@ -266,7 +247,7 @@ namespace WDT_AS2.Models
             account.BillPays.Add(
                 new BillPay
                 {
-                    PayeeID = AccountNumber,
+                    PayeeID = PayeeAccountNumber,
                     Amount = amount,
                     ScheduleDate = PickedDate,
                     Period = Period,

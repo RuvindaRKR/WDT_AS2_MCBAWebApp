@@ -3,15 +3,21 @@
     ViewData["Title"] = "BillPay";
 }
 
-<h1 class="display-4">Account Number @Model.AccountNumber (@Model.AccountType)</h1>
 
 <div class="row">
     <div class="col-md-4">
         <form asp-action="BillPay">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label for="Amount" class="control-label">Your Account</label>
+                <select id="myAccount" name="MyAccountNumber" class="form-control" value="@ViewBag.MyAccountNumber" asp-for="AccountNumber" asp-items="@ViewBag.AccList" required>
+                    <option value="">Select An Account</option>
+                </select>
+                @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
                 <label for="Amount" class="control-label">Payee Account</label>
-                <select id="transferAccount" name="AccountNumber" class="form-control" value="@ViewBag.AccountNumber" asp-for="AccountNumber" asp-items="@ViewBag.PayeeList" required>
+                <select id="transferAccount" name="PayeeAccountNumber" class="form-control" value="@ViewBag.PayeeAccountNumber" asp-for="AccountNumber" asp-items="@ViewBag.PayeeList" required>
                     <option value="">Select An Account</option>
                 </select>
                 @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
@@ -25,7 +31,7 @@
             </div>
             <div class="form-group">
                 <label for="Date" class="control-label">Shedule Date</label>
-                <input id="PickedDate" name="PickedDate" class="form-control" type="datetime-local" value="@ViewBag.DatePicked" required/>
+                <input id="PickedDate" name="PickedDate" class="form-control" type="datetime-local" value="@ViewBag.DatePicked" required />
                 @Html.ValidationMessage("Date", new { @class = "text-danger" })
             </div>
             <div class="form-group">
