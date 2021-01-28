@@ -186,7 +186,7 @@ namespace WDT_AS2.Models
 
         public async Task<IActionResult> Statements() 
         {
-            var accList = _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToList();
+            var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
             ViewBag.AccList = new SelectList(accList, "AccountNumber");
             return View();
         }
@@ -209,9 +209,9 @@ namespace WDT_AS2.Models
 
         public async Task<IActionResult> BillPay()
         {
-            var payeeList = _context.Payees.Select(x => x.PayeeID).ToList();
+            var payeeList = await _context.Payees.Select(x => x.PayeeID).ToListAsync();
             ViewBag.PayeeList = new SelectList(payeeList, "AccountNumber");
-            var accList = _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToList();
+            var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
             ViewBag.AccList = new SelectList(accList, "AccountNumber");
             return View();
         }
