@@ -26,11 +26,7 @@
             {
                 <tr>
                     <td>
-                        <form asp-action="ModifyBillPay">
-                            <div class="form-group">
-                                <input type="submit" value="Modify" asp-route-id="@billpay.BillPayID" class="btn btn-primary" />
-                            </div>
-                        </form>
+                        <a class="btn btn-primary" asp-action="ModifyBillPay" asp-route-id="@billpay.BillPayID">Modify</a>
                     </td>
                     <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
                     <td>@Html.DisplayFor(x => billpay.Amount)</td>

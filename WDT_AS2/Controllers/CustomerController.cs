@@ -29,6 +29,7 @@ namespace WDT_AS2.Models
         public async Task<IActionResult> Deposit(int id) => View(await _context.Accounts.FindAsync(id));
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deposit(int id, decimal amount)
         {
             var account = await _context.Accounts.FindAsync(id);
@@ -61,6 +62,7 @@ namespace WDT_AS2.Models
         public async Task<IActionResult> Withdraw(int id) => View(await _context.Accounts.FindAsync(id));
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Withdraw(int id, decimal amount)
         {
             var account = await _context.Accounts.FindAsync(id);
@@ -127,6 +129,7 @@ namespace WDT_AS2.Models
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Transfer(int id, int AccountNumber, decimal amount)
         {
             var account = await _context.Accounts.FindAsync(id);
@@ -217,6 +220,7 @@ namespace WDT_AS2.Models
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> BillPay(int MyAccountNumber, int PayeeAccountNumber, decimal amount, DateTime PickedDate, Period Period)
         {
             var account = await _context.Accounts.FindAsync(MyAccountNumber);
@@ -286,9 +290,10 @@ namespace WDT_AS2.Models
         }
 
         [HttpPost]
-        public async Task<IActionResult> ModifyBillPay(int billpayID)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ModifyBillPay(int id)
         {
-            var billpay = await _context.BillPays.FindAsync(billpayID); // <- this part is always null
+            var billpay = await _context.BillPays.FindAsync(id);
             var payeeName = _context.Payees.Where(x => x.PayeeID == billpay.PayeeID).Select(x => x.PayeeName);
             ViewBag.PayeeName = payeeName;
             var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
