@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WDT_AS2.Data;
-using WDT_AS2.Models;
+using WDT_AS2.ViewModels;
 using WDT_AS2.Utilities;
 using WDT_AS2.Filters;
 using System.Collections;
@@ -258,5 +258,36 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> ScheduledPayments(int? page = 1)
+        {
+            var customer = await _context.Customers.FindAsync(CustomerID);
+            ViewBag.Customer = customer;
+
+            var query =  from b in _context.BillPays
+                         join a in _context.Accounts
+                             on b.AccountNumber equals a.AccountNumber
+                         join p in _context.Payees
+                             on b.PayeeID equals p.PayeeID
+                         where (a.CustomerID == CustomerID)
+                         select new ScheduledPaymentsViewModel
+                         {
+                             BillPayID = b.BillPayID,
+                             PayeeName = p.PayeeName,
+                             Amount = b.Amount,
+                             ScheduleDate = b.ScheduleDate,
+                             Period = b.Period
+                         };
+
+            int pageSize = 4;
+            var billPayListPaged = await query.ToPagedListAsync(page, pageSize);
+
+            return View(billPayListPaged);
+        }
+
+        //public async Task<IActionResult> ModifyBillPay(int billpayID)
+        //{
+
+        //}
     }
 }

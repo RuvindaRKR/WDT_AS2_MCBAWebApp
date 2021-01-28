@@ -1,16 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Models
 {
-    public enum Period
-    {
-        Monthly = 1,
-        Quaterly = 2,
-        OnceOff = 3,
-    }
-
     public record BillPay
     {
         public int BillPayID { get; init; }
