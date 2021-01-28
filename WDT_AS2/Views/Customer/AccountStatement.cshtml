@@ -6,8 +6,9 @@
     ViewData["Title"] = "Statements";
     var customer = (Customer)ViewBag.Customer;
     var account = (Account)ViewBag.Account;
-    var id = account.AccountNumber;
+    var MyAccountNumber = account.AccountNumber;
 }
+
 
 <div>
     <h1 class="display-4"> Statement for Account @account.AccountNumber (@account.AccountType)</h1>
@@ -37,7 +38,7 @@
             }
         </table>
 
-        @Html.PagedListPager(Model, page => Url.Action("AccountStatement", new { id, page }),
+        @Html.PagedListPager(Model, page => Url.Action("AccountStatement", new { MyAccountNumber, page }),
             new PagedListRenderOptions
             {
                 LiElementClasses = new[] { "page-item" },

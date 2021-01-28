@@ -184,30 +184,36 @@ namespace WDT_AS2.Models
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Statements() => View(await _context.Customers.FindAsync(CustomerID));
+        public async Task<IActionResult> Statements() 
+        {
+            var accList = _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToList();
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
+            return View();
+        }
 
-        public async Task<IActionResult> AccountStatement(int id, int? page = 1)
+
+        public async Task<IActionResult> AccountStatement(int MyAccountNumber, int? page = 1)
         {
             var customer = await _context.Customers.FindAsync(CustomerID);
             ViewBag.Customer = customer;
 
-            var account = await _context.Accounts.FindAsync(id);
+            var account = await _context.Accounts.FindAsync(MyAccountNumber);
             ViewBag.Account = account;
 
 
             int pageSize = 4;
-            var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == id).ToPagedListAsync(page, pageSize);
+            var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == MyAccountNumber).ToPagedListAsync(page, pageSize);
             
             return View(transactionListPaged);
         }
 
-        public async Task<IActionResult> BillPay(int id)
+        public async Task<IActionResult> BillPay()
         {
             var payeeList = _context.Payees.Select(x => x.PayeeID).ToList();
             ViewBag.PayeeList = new SelectList(payeeList, "AccountNumber");
             var accList = _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToList();
             ViewBag.AccList = new SelectList(accList, "AccountNumber");
-            return View(await _context.Accounts.FindAsync(id));
+            return View();
         }
 
         [HttpPost]
@@ -222,14 +228,8 @@ namespace WDT_AS2.Models
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if (amount > account.Balance)
                 ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
-            if (account == null)
-                ModelState.AddModelError(nameof(MyAccountNumber), "Invalid Account ID.");
-            if (payeeAccount == null)
-                ModelState.AddModelError(nameof(PayeeAccountNumber), "Invalid Account ID.");
             if (!ModelState.IsValid)
             {
-                ViewBag.MyAccountNumber = MyAccountNumber;
-                ViewBag.PayeeAccountNumber = PayeeAccountNumber;
                 ViewBag.Amount = amount;
                 return View(account);
             }

@@ -1,37 +1,31 @@
-﻿@model Customer
+﻿@model Account
 @{
     ViewData["Title"] = "Statements";
 }
 
 <div>
-    <h1 class="display-4">Welcome, @Model.CustomerName</h1>
 
     <h3>Your Accounts</h3>
 
     @*change this to show as dropdown box*@
-    <table class="table">
-        <tr>
-            <th>@Html.DisplayNameFor(x => x.Accounts[0].AccountNumber)</th>
-            <th>@Html.DisplayNameFor(x => x.Accounts[0].AccountType)</th>
-            <th>@Html.DisplayNameFor(x => x.Accounts[0].Balance)</th>
-            <th></th>
-        </tr>
-        @foreach (var account in Model.Accounts)
-        {
-            <tr>
-                <td>@Html.DisplayFor(x => account.AccountNumber)</td>
-                <td>@Html.DisplayFor(x => account.AccountType)</td>
-                <td>@Html.DisplayFor(x => account.Balance)</td>
-                <td>
-                    <a class="btn btn-primary"
-                       asp-action="AccountStatement" asp-route-id="@account.AccountNumber">Show Account Statement</a>
-                </td>
-
-            </tr>
-        }
-    </table>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="AccountStatement">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <select id="myAccount" name="MyAccountNumber" class="form-control" asp-for="AccountNumber" asp-items="@ViewBag.AccList" required>
+                        <option value="">Select An Account</option>
+                    </select>
+                    @Html.ValidationMessage("AccountNumber", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Select" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-@*<div>
+<div>
     <a asp-action="Index">Back to Accounts</a>
-</div>*@
+</div>
