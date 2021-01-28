@@ -277,5 +277,20 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
+
+        //public async Task<IActionResult> ScheduledPayments(int? page = 1)
+        //{
+        //    var customer = await _context.Customers.FindAsync(CustomerID);
+        //    ViewBag.Customer = customer;
+
+        //    var account = await _context.Accounts.FindAsync(id);
+        //    ViewBag.Account = account;
+
+
+        //    int pageSize = 4;
+        //    var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == id).ToPagedListAsync(page, pageSize);
+
+        //    return View(transactionListPaged);
+        //}
     }
 }
