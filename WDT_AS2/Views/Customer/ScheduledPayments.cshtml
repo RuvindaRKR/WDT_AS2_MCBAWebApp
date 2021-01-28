@@ -1,38 +1,34 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Mvc.Core.Common
-@model IPagedList<Transaction>
+@using WDT_AS2.ViewModels 
+@model IPagedList<ScheduledPaymentsViewModel>
 @{
     ViewData["Title"] = "Scheduled Payments";
     var customer = (Customer)ViewBag.Customer;
-    var account = (Account)ViewBag.Account;
-    var id = account.AccountNumber;
 }
 
 <div>
-    <h1 class="display-4"> Scheduled Payments for  @account.AccountNumber (@account.AccountType)</h1>
-    <h4>
-        Account Balance: $@account.Balance.ToString("0.00")
-    </h4>
+    <h1 class="display-4"> Scheduled Payments for @customer.CustomerName</h1>
 
     <h3>Your Transactions</h3>
     <div>
         <table class="table">
             <tr>
-                <th>@Html.DisplayNameFor(x => Model[0].TransactionID):</th>
-                <th>@Html.DisplayNameFor(x => Model[0].TransactionType):</th>
-                <th>@Html.DisplayNameFor(x => Model[0].DestinationAccountNumber):</th>
+                <th></th>
+                <th>@Html.DisplayNameFor(x => Model[0].PayeeName):</th>
                 <th>@Html.DisplayNameFor(x => Model[0].Amount):</th>
-                <th>@Html.DisplayNameFor(x => Model[0].Comment):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].ScheduleDate):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Period):</th>
             </tr>
-            @foreach (var transaction in Model)
+            @foreach (var billpay in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(x => transaction.TransactionID)</td>
-                    <td>@Html.DisplayFor(x => transaction.TransactionType)</td>
-                    <td>@Html.DisplayFor(x => transaction.DestinationAccountNumber)</td>
-                    <td>@Html.DisplayFor(x => transaction.Amount)</td>
-                    <td>@Html.DisplayFor(x => transaction.Comment)</td>
+                    <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
+                    <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
+                    <td>@Html.DisplayFor(x => billpay.Amount)</td>
+                    <td>@Html.DisplayFor(x => billpay.ScheduleDate)</td>
+                    <td>@Html.DisplayFor(x => billpay.Period)</td>
                 </tr>
             }
         </table>
@@ -43,8 +39,5 @@
                 LiElementClasses = new[] { "page-item" },
                 PageClasses = new[] { "page-link" }
             })
-    </div>
-    <div>
-        <a asp-action="Statements">Back to Accounts</a>
     </div>
 </div>
