@@ -15,6 +15,8 @@ namespace WDT_AS2.ViewModels
         [Column(TypeName = "money")]
         public decimal Amount { get; init; }
 
+        public Status Status { get; init; }
+
         public DateTime ScheduleDate { get; init; }
 
         public Period Period { get; init; }

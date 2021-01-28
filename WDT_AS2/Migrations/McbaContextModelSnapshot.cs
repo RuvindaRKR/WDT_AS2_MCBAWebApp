@@ -70,6 +70,9 @@ namespace WDT_AS2.Migrations
                     b.Property<DateTime>("ScheduleDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("BillPayID");
 
                     b.HasIndex("AccountNumber");

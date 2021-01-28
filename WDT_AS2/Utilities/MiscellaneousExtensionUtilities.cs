@@ -13,4 +13,11 @@
         OnceOff = 3,
         Anually = 4
     }
+
+    public enum Status
+    {
+        Pending = 1,
+        Complete = 2,
+        Failed = 3
+    }
 }

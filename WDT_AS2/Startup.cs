@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WDT_AS2.BackgroundServices;
 using WDT_AS2.Data;
 
 namespace WDT_AS2
@@ -37,6 +38,9 @@ namespace WDT_AS2
                 // Make the session cookie essential.
                 options.Cookie.IsEssential = true;
             });
+
+            // Add people background service to automatically run in the background along-side the web-server.
+            services.AddHostedService<BillPayBackgroundService>();
 
             services.AddControllersWithViews();
         }

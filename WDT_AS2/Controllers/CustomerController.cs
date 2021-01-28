@@ -36,7 +36,7 @@ namespace WDT_AS2.Models
 
             if(amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
-            if(amount.HasMoreThanTwoDecimalPlaces())
+            if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if(!ModelState.IsValid)
             {
@@ -67,9 +67,18 @@ namespace WDT_AS2.Models
         {
             var account = await _context.Accounts.FindAsync(id);
             var customer = await _context.Customers.FindAsync(account.CustomerID);
+            var transactionCount = _context.Transactions.Where(x => x.TransactionType == TransactionType.Transfer || x.TransactionType == TransactionType.Withdraw).Count();
+            decimal fee = 0;
+            int chAmount = 0;
 
+            if (transactionCount > 4)
+                fee = 0.1m;
+            if (account.AccountType == AccountType.Checking)
+                chAmount = 200;
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
+            if ((amount + fee + chAmount) > account.Balance)
+                ModelState.AddModelError(nameof(amount), "Insufficient Funds.");
             if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
             if (!ModelState.IsValid)
@@ -79,7 +88,7 @@ namespace WDT_AS2.Models
             }
 
             // Note this code could be moved out of the controller, e.g., into the Model.
-            account.Balance -= amount;
+            account.Balance -= (amount + fee);
             account.Transactions.Add(
                 new Transaction
                 {
@@ -88,13 +97,13 @@ namespace WDT_AS2.Models
                     TransactionTimeUtc = DateTime.UtcNow
                 });
 
-            if (GetTransactionCount(customer) > 4)
+            if (transactionCount > 4)
             {
                 account.Transactions.Add(
                 new Transaction
                 {
                     TransactionType = TransactionType.ServiceCharge,
-                    Amount = 0.1m,
+                    Amount = fee,
                     TransactionTimeUtc = DateTime.UtcNow
                 });
             }
@@ -103,23 +112,7 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
-
-        public int GetTransactionCount(Customer customer)
-        {
-            int count = 0;
-
-            foreach(var account in customer.Accounts)
-            {
-                foreach (var transaction in account.Transactions)
-                {
-                    if ((transaction.TransactionType == TransactionType.Transfer || transaction.TransactionType == TransactionType.Withdraw) && transaction.DestinationAccountNumber != transaction.AccountNumber)
-                    {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
+ 
 
         public async Task<IActionResult> Transfer(int id)
         {
@@ -135,12 +128,19 @@ namespace WDT_AS2.Models
             var account = await _context.Accounts.FindAsync(id);
             var transferAccount = await _context.Accounts.FindAsync(AccountNumber);
             var customer = await _context.Customers.FindAsync(account.CustomerID);
+            var transactionCount = _context.Transactions.Where(x => x.TransactionType == TransactionType.Transfer || x.TransactionType == TransactionType.Withdraw).Count();
+            decimal fee = 0;
+            int chAmount = 0;
 
+            if (transactionCount > 4)
+                fee = 0.2m;
+            if (account.AccountType == AccountType.Checking)
+                chAmount = 200;
             if (amount <= 0)
                 ModelState.AddModelError(nameof(amount), "Amount must be positive.");
             if (amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
-            if (amount > account.Balance)
+            if ((amount + fee + chAmount) > account.Balance)
                 ModelState.AddModelError(nameof(amount), "Insufficient Funds.");
             if (transferAccount == null)
                 ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
@@ -152,7 +152,18 @@ namespace WDT_AS2.Models
             }
 
             // Note this code could be moved out of the controller, e.g., into the Model.
-            account.Balance -= amount;
+            if (transactionCount > 4)
+            {
+                account.Transactions.Add(
+                new Transaction
+                {
+                    TransactionType = TransactionType.ServiceCharge,
+                    Amount = fee,
+                    TransactionTimeUtc = DateTime.UtcNow
+                });
+            }
+
+            account.Balance -= (amount+fee);
             account.Transactions.Add(
                 new Transaction
                 {
@@ -170,17 +181,6 @@ namespace WDT_AS2.Models
                     Amount = amount,
                     TransactionTimeUtc = DateTime.UtcNow
                 });
-
-            if (GetTransactionCount(customer) > 4)
-            {
-                account.Transactions.Add(
-                new Transaction
-                {
-                    TransactionType = TransactionType.ServiceCharge,
-                    Amount = 0.2m,
-                    TransactionTimeUtc = DateTime.UtcNow
-                });
-            }
 
             await _context.SaveChangesAsync();
 
@@ -238,21 +238,12 @@ namespace WDT_AS2.Models
                 return View(account);
             }
 
-            // Note this code could be moved out of the controller, e.g., into the Model.
-            account.Balance -= amount;
-            account.Transactions.Add(
-                new Transaction
-                {
-                    TransactionType = TransactionType.BillPay,
-                    Amount = amount,
-                    TransactionTimeUtc = DateTime.UtcNow
-                });
-
             account.BillPays.Add(
                 new BillPay
                 {
                     PayeeID = PayeeAccountNumber,
                     Amount = amount,
+                    Status = Status.Pending,
                     ScheduleDate = PickedDate,
                     Period = Period,
                     ModifyDate = DateTime.UtcNow
@@ -279,6 +270,7 @@ namespace WDT_AS2.Models
                              BillPayID = b.BillPayID,
                              PayeeName = p.PayeeName,
                              Amount = b.Amount,
+                             Status = b.Status,
                              ScheduleDate = b.ScheduleDate,
                              Period = b.Period
                          };

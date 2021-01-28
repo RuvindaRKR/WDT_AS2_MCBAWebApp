@@ -5,25 +5,28 @@ using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Models
 {
-    public record BillPay
-    {
-        public int BillPayID { get; init; }
+
+    public class BillPay
+    {     
+        public int BillPayID { get; set; }
 
         [ForeignKey("Account")]
-        public int AccountNumber { get; init; }
-        public virtual Account Account { get; init; }
+        public int AccountNumber { get; set; }
+        public virtual Account Account { get; set; }
 
         [ForeignKey("Payee")]
-        public int PayeeID { get; init; }
-        public virtual Payee Payee { get; init; }
+        public int PayeeID { get; set; }
+        public virtual Payee Payee { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Amount { get; init; }
+        public decimal Amount { get; set; }
 
-        public DateTime ScheduleDate { get; init; }
+        public Status Status { get; set; }
 
-        public Period Period { get; init; }
+        public DateTime ScheduleDate { get; set; }
 
-        public DateTime ModifyDate { get; init; }
+        public Period Period { get; set; }
+
+        public DateTime ModifyDate { get; set; }
     }
 }
