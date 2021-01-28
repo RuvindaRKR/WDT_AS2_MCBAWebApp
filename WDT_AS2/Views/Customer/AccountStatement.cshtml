@@ -37,7 +37,7 @@
             }
         </table>
 
-        @Html.PagedListPager(Model, page => Url.Action("AccountStatments", new { id, page }),
+        @Html.PagedListPager(Model, page => Url.Action("AccountStatement", new { id, page }),
             new PagedListRenderOptions
             {
                 LiElementClasses = new[] { "page-item" },
