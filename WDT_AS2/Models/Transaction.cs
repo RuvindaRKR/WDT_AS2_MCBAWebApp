@@ -1,18 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Models
 {
-    public enum TransactionType
-    {
-        Deposit = 1,
-        Withdraw = 2,
-        Transfer = 3,
-        ServiceCharge = 4,
-        BillPay = 5
-    }
-
     public record Transaction
     {
         public int TransactionID { get; init; }

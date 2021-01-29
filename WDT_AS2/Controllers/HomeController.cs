@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WDT_AS2.Models;
 
-namespace WDT_AS2.Models
+namespace WDT_AS2.Controllers
 {
     public class HomeController : Controller
     {

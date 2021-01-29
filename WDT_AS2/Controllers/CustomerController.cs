@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
+using WDT_AS2.Models;
 
-namespace WDT_AS2.Models
+namespace WDT_AS2.Controllers
 {
     [AuthorizeCustomer]
     public class CustomerController : Controller
@@ -201,7 +202,6 @@ namespace WDT_AS2.Models
 
             var account = await _context.Accounts.FindAsync(MyAccountNumber);
             ViewBag.Account = account;
-
 
             int pageSize = 4;
             var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == MyAccountNumber).ToPagedListAsync(page, pageSize);
