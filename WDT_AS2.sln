@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WDT_AS2", "WDT_AS2\WDT_AS2.csproj", "{42988052-C98B-476D-AEC6-B0233162FDA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebAPI", "AdminWebAPI\AdminWebAPI.csproj", "{167F3430-12AD-45BA-9352-8C046E40CE45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebAPI", "AdminWebAPI\AdminWebAPI.csproj", "{167F3430-12AD-45BA-9352-8C046E40CE45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebApp", "AdminWebApp\AdminWebApp.csproj", "{C8C5FE60-11D9-4FFE-B1F4-E487BC9CEFDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{167F3430-12AD-45BA-9352-8C046E40CE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{167F3430-12AD-45BA-9352-8C046E40CE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{167F3430-12AD-45BA-9352-8C046E40CE45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C5FE60-11D9-4FFE-B1F4-E487BC9CEFDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C5FE60-11D9-4FFE-B1F4-E487BC9CEFDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C5FE60-11D9-4FFE-B1F4-E487BC9CEFDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C5FE60-11D9-4FFE-B1F4-E487BC9CEFDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
