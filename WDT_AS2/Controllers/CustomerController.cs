@@ -51,7 +51,7 @@ namespace WDT_AS2.Models
                 {
                     TransactionType = TransactionType.Deposit,
                     Amount = amount,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    TransactionTimeUtc = DateTime.Now
                 });
 
             await _context.SaveChangesAsync();
@@ -94,7 +94,7 @@ namespace WDT_AS2.Models
                 {
                     TransactionType = TransactionType.Withdraw,
                     Amount = amount,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    TransactionTimeUtc = DateTime.Now
                 });
 
             if (transactionCount > 4)
@@ -104,7 +104,7 @@ namespace WDT_AS2.Models
                 {
                     TransactionType = TransactionType.ServiceCharge,
                     Amount = fee,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    TransactionTimeUtc = DateTime.Now
                 });
             }
 
@@ -158,7 +158,7 @@ namespace WDT_AS2.Models
                 {
                     TransactionType = TransactionType.ServiceCharge,
                     Amount = fee,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    TransactionTimeUtc = DateTime.Now
                 });
             }
 
@@ -169,7 +169,7 @@ namespace WDT_AS2.Models
                     TransactionType = TransactionType.Transfer,
                     DestinationAccountNumber = AccountNumber,
                     Amount = amount,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    TransactionTimeUtc = DateTime.Now
                 });
 
             transferAccount.Balance += amount;
@@ -178,7 +178,7 @@ namespace WDT_AS2.Models
                 {
                     TransactionType = TransactionType.Transfer,
                     Amount = amount,
-                    TransactionTimeUtc = DateTime.UtcNow
+                    TransactionTimeUtc = DateTime.Now
                 });
 
             await _context.SaveChangesAsync();
@@ -248,7 +248,7 @@ namespace WDT_AS2.Models
                     Status = Status.Pending,
                     ScheduleDate = PickedDate,
                     Period = Period,
-                    ModifyDate = DateTime.UtcNow
+                    ModifyDate = DateTime.Now
                 });
 
             await _context.SaveChangesAsync();
@@ -320,7 +320,7 @@ namespace WDT_AS2.Models
                 ModelState.AddModelError(nameof(Amount), "Amount cannot have more than 2 decimal places.");
             if (Amount > (account.Balance + chAmount))
                 ModelState.AddModelError(nameof(Amount), "Insufficient Funds.");
-            if (DateTime.Compare(DateTime.UtcNow, ScheduleDate) > 0)
+            if (DateTime.Compare(DateTime.Now, ScheduleDate) > 0)
                 ModelState.AddModelError(nameof(ScheduleDate), "Select a time in the future.");
             if (!ModelState.IsValid)
             {
@@ -332,11 +332,26 @@ namespace WDT_AS2.Models
             billpay.Amount = Amount;
             billpay.ScheduleDate = ScheduleDate;
             billpay.Period = Period;
-            billpay.ModifyDate = DateTime.UtcNow;
+            billpay.ModifyDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+
+        public async Task<IActionResult> DeleteBillPay(int id) => View(await _context.BillPays.FindAsync(id));
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int BillPayID)
+        {
+            var billpay = await _context.BillPays.FindAsync(BillPayID);
+            _context.BillPays.Remove(billpay);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ScheduledPayments));
         }
     }
 }

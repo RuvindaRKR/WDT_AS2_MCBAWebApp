@@ -43,7 +43,7 @@ namespace WDT_AS2.BackgroundServices
             {
                 if (BillPay.Status == Status.Pending)
                 {
-                    if (DateTime.Compare(DateTime.UtcNow, BillPay.ScheduleDate) >= 0)
+                    if (DateTime.Compare(DateTime.Now, BillPay.ScheduleDate) >= 0)
                     {
                         var account = await context.Accounts.FindAsync(BillPay.AccountNumber);
                         int chAmount = 0;
