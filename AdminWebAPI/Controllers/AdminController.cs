@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebAPI.Models;
+using AdminWebAPI.Models.DataManager;
 
 namespace AdminWebAPI.Controllers
 {
@@ -11,29 +13,23 @@ namespace AdminWebAPI.Controllers
     [Route("[controller]")]
     public class AdminController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly CustomerManager _repo;
 
-        private readonly ILogger<AdminController> _logger;
-
-        public AdminController(ILogger<AdminController> logger)
+        public AdminController(CustomerManager repo)
         {
-            _logger = logger;
+            _repo = repo;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<Customer> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return _repo.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public Customer Get(int id)
+        {
+            return _repo.Get(id);
         }
     }
 }
