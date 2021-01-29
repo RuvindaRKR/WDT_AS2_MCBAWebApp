@@ -1,11 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WDT_AS2.Utilities;
+using AdminWebAPI.Utilities;
 
 namespace AdminWebAPI.Models
 {
-
     public class BillPay
     {     
         public int BillPayID { get; set; }
