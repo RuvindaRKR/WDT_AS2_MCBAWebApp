@@ -41,5 +41,21 @@ namespace WDT_AS2.Models
 
             return RedirectToAction("Index", "Home");
         }
+
+        public async Task<IActionResult> AdminLogin(string loginID, string password)
+        {
+            var login = await _context.Logins.FindAsync(loginID);
+            if (login == null || !PBKDF2.Verify(login.PasswordHash, password))
+            {
+                ModelState.AddModelError("LoginFailed", "Login failed, please try again.");
+                return View(new Login { LoginID = loginID });
+            }
+
+            // Login customer.
+            HttpContext.Session.SetInt32(nameof(Customer.CustomerID), login.CustomerID);
+            HttpContext.Session.SetString(nameof(Customer.CustomerName), login.Customer.CustomerName);
+
+            return RedirectToAction("Index", "Customer");
+        }
     }
 }
