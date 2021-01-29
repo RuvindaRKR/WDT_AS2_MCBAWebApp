@@ -54,5 +54,13 @@ namespace AdminWebAPI.Controllers
         {
             return _repo.Delete(id);
         }
+
+        //GET: /Accounts/Customer/1
+        [HttpGet("Customer/{id}")]
+        public IEnumerable<Account> GetCustomer(int id)
+        {
+            return _repo.GetCustomer(id);
+        }
+
     }
 }

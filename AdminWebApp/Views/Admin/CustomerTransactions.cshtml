@@ -1,0 +1,63 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@model IPagedList<Transaction>
+@{
+    ViewData["Title"] = "Customer Transactions";
+    var customer = ViewBag.Customer;
+    var accounts = ViewBag.Accounts;
+}
+
+<div>
+    <h1 class="display-4">Showing Transactions for @customer.CustomerName</h1>
+    <br />
+    <h3>Accounts</h3>
+    <table class="table">
+        <tr>
+            <th>Account Number:</th>
+            <th>Account Type:</th>
+            <th>Current Balance:</th>
+        </tr>
+        @foreach (var account in accounts)
+        {
+            <tr>
+                <td>@account.AccountNumber</td>
+                <td>@account.AccountType</td>
+                <td>@account.Balance</td>
+            </tr>  
+        }
+    </table>
+    <br />
+    <h3>Transactions</h3>
+    <br />
+    <div>
+        <table class="table">
+            <tr>
+                <th>@Html.DisplayNameFor(x => Model[0].TransactionID)</th>
+                <th>@Html.DisplayNameFor(x => Model[0].TransactionType)</th>
+                <th>@Html.DisplayNameFor(x => Model[0].DestinationAccountNumber)</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Amount)</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Comment)</th>
+                <th>@Html.DisplayNameFor(x => Model[0].TransactionTimeUtc)</th>
+            </tr>
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(x => transaction.TransactionID)</td>
+                    <td>@Html.DisplayFor(x => transaction.TransactionType)</td>
+                    <td>@Html.DisplayFor(x => transaction.DestinationAccountNumber)</td>
+                    <td>@Html.DisplayFor(x => transaction.Amount)</td>
+                    <td>@Html.DisplayFor(x => transaction.Comment)</td>
+                    <td>@Html.DisplayFor(x => transaction.TransactionTimeUtc)</td>
+                </tr>
+            }
+        </table>
+
+        @Html.PagedListPager(Model, page => Url.Action("CustomerTransactions", new { page }),
+            new PagedListRenderOptions
+            {
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" }
+            })
+    </div>
+</div>
