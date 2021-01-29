@@ -2,15 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Models
 {
-    public enum AccountType
-    {
-        Checking = 1,
-        Saving = 2
-    }
-
     public class Account
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]

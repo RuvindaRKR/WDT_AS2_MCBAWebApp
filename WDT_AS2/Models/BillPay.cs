@@ -5,7 +5,6 @@ using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Models
 {
-
     public class BillPay
     {     
         public int BillPayID { get; set; }
