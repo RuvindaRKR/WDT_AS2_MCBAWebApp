@@ -25,8 +25,6 @@ namespace WDT_AS2.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Background Service is running.");
-
             while (!cancellationToken.IsCancellationRequested)
             {
                 await DoWork(cancellationToken);
@@ -72,7 +70,7 @@ namespace WDT_AS2.BackgroundServices
 
             await context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("People Background Service is work complete.");
+            _logger.LogInformation("Bill Pay Background Service is work complete.");
         }
     }
 }
