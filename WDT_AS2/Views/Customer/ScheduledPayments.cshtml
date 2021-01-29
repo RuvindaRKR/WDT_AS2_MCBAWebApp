@@ -1,7 +1,8 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Mvc.Core.Common
-@using WDT_AS2.ViewModels 
+@using WDT_AS2.ViewModels
+@using WDT_AS2.Utilities
 @model IPagedList<ScheduledPaymentsViewModel>
 @{
     ViewData["Title"] = "Scheduled Payments";
@@ -14,6 +15,15 @@
     <br />
     <h3>Your Transactions</h3>
     <div>
+        <div>
+            Filter by: <a asp-action="ScheduledPayments" asp-route-filter="@Status.Pending">Pending</a>
+            <a asp-action="ScheduledPayments" asp-route-filter="@Status.Complete">Complete</a>
+            <a asp-action="ScheduledPayments" asp-route-filter="@Status.Failed">Failed</a>
+            @if (ViewBag.TableFilter != null)
+            {
+                <a asp-action="ScheduledPayments" asp-route-filter="@null">Clear Filters</a>
+            }
+        </div>
         <table class="table">
             <tr>
                 <th></th>

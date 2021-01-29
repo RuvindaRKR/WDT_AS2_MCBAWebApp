@@ -112,7 +112,6 @@ namespace WDT_AS2.Models
 
             return RedirectToAction(nameof(Index));
         }
- 
 
         public async Task<IActionResult> Transfer(int id)
         {
@@ -257,26 +256,46 @@ namespace WDT_AS2.Models
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> ScheduledPayments(int? page = 1)
+        public async Task<IActionResult> ScheduledPayments(int? page = 1, Status? filter = null)
         {
             var customer = await _context.Customers.FindAsync(CustomerID);
             ViewBag.Customer = customer;
 
-            var query =  from b in _context.BillPays
-                         join a in _context.Accounts
-                             on b.AccountNumber equals a.AccountNumber
-                         join p in _context.Payees
-                             on b.PayeeID equals p.PayeeID
-                         where (a.CustomerID == CustomerID)
-                         select new ScheduledPaymentsViewModel
-                         {
-                             BillPayID = b.BillPayID,
-                             PayeeName = p.PayeeName,
-                             Amount = b.Amount,
-                             Status = b.Status,
-                             ScheduleDate = b.ScheduleDate,
-                             Period = b.Period
-                         };
+            // all billpays
+            var query = from b in _context.BillPays
+                        join a in _context.Accounts
+                            on b.AccountNumber equals a.AccountNumber
+                        join p in _context.Payees
+                            on b.PayeeID equals p.PayeeID
+                        where (a.CustomerID == CustomerID)
+                        orderby b.ScheduleDate descending
+                        select new ScheduledPaymentsViewModel
+                        {
+                            BillPayID = b.BillPayID,
+                            PayeeName = p.PayeeName,
+                            Amount = b.Amount,
+                            Status = b.Status,
+                            ScheduleDate = b.ScheduleDate,
+                            Period = b.Period
+                        };
+
+            switch(filter)
+            {
+                case Status.Pending:
+                    query = query.Where(b => b.Status == Status.Pending);
+                    ViewBag.TableFilter = Status.Pending;
+                    break;
+                case Status.Complete:
+                    query = query.Where(b => b.Status == Status.Complete);
+                    ViewBag.TableFilter = Status.Complete;
+                    break;
+                case Status.Failed:
+                    query = query.Where(b => b.Status == Status.Failed);
+                    ViewBag.TableFilter = Status.Failed;
+                    break;
+                default:
+                    break;
+            }
 
             int pageSize = 4;
             var billPayListPaged = await query.ToPagedListAsync(page, pageSize);
