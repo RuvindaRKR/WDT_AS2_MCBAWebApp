@@ -47,5 +47,11 @@ namespace AdminWebAPI.Models.DataManager
             
             return id;
         }
+
+        public IEnumerable<Account> GetCustomer(int id)
+        {
+            var accList = _context.Accounts.Where(x => x.AccountNumber == id).ToList();
+            return accList;
+        }
     }
 }
