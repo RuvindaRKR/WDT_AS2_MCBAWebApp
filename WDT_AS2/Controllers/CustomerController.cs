@@ -285,8 +285,7 @@ namespace WDT_AS2.Models
         }
 
         public async Task<IActionResult> ModifyBillPay(int id) => View(await _context.BillPays.FindAsync(id));
-       
-        //public async Task<IActionResult> ModifyBillPay(BillPay billPay)
+        
         [HttpPost]
         public async Task<IActionResult> ModifyBillPay(int BillPayID, int AccountNumber, decimal Amount, DateTime ScheduleDate, Period Period)
         {
@@ -301,7 +300,7 @@ namespace WDT_AS2.Models
             if (Amount.HasMoreThanTwoDecimalPlaces())
                 ModelState.AddModelError(nameof(Amount), "Amount cannot have more than 2 decimal places.");
             if (Amount > (account.Balance + chAmount))
-                ModelState.AddModelError(nameof(Amount), "Insufficeint Funds.");
+                ModelState.AddModelError(nameof(Amount), "Insufficient Funds.");
             if (DateTime.Compare(DateTime.UtcNow, ScheduleDate) > 0)
                 ModelState.AddModelError(nameof(ScheduleDate), "Select a time in the future.");
             if (!ModelState.IsValid)
