@@ -41,5 +41,23 @@ namespace WDT_AS2.Models
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet("admin")]
+        public IActionResult Admin() => View();
+
+        [HttpGet("admin")]
+        public async Task<IActionResult> Admin(string loginID, string password)
+        {
+            if (loginID != "admin" || password != "admin")
+            {
+                ModelState.AddModelError("LoginFailed", "Login failed, please try again.");
+                return View(new Login { LoginID = loginID });
+            }
+
+            // Login administrator.
+            HttpContext.Session.SetInt32("AdminID", 1);
+
+            return RedirectToAction("Index", "Admin");
+        }
     }
 }
