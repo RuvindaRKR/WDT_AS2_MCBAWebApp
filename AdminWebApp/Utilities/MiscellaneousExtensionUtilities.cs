@@ -1,4 +1,4 @@
-﻿namespace AdminWebAPI.Utilities
+﻿namespace AdminWebApp.Utilities
 {
     public static class MiscellaneousExtensionUtilities
     {

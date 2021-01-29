@@ -1,6 +1,6 @@
 using System;
 
-namespace AdminSiteAndApi.Models
+namespace AdminWebApp.Models
 {
     public class ErrorViewModel
     {

@@ -5,11 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AdminSiteAndApi
+namespace AdminWebApp
 {
     public class Startup
     {
@@ -23,6 +24,21 @@ namespace AdminSiteAndApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Configure api client.
+            services.AddHttpClient("api", client =>
+            {
+                client.BaseAddress = new Uri("http://localhost:5000");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+
+            // Store session into Web-Server memory.
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                // Make the session cookie essential.
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddControllersWithViews();
         }
 
@@ -41,9 +57,8 @@ namespace AdminSiteAndApi
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

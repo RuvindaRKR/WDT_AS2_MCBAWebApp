@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WDT_AS2.Utilities;
+using AdminWebApp.Utilities;
 
-namespace WDT_AS2.Models
+namespace AdminWebApp.Models
 {
     public record Transaction
     {

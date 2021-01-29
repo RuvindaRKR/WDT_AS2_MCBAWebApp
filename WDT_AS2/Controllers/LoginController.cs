@@ -5,7 +5,7 @@ using WDT_AS2.Data;
 using WDT_AS2.Models;
 using SimpleHashing;
 
-namespace WDT_AS2.Models
+namespace WDT_AS2.Controllers
 {
     [Route("/Mcba/SecureLogin")]
     public class LoginController : Controller

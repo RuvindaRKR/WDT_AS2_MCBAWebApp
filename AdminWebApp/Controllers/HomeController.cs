@@ -1,4 +1,4 @@
-﻿using AdminSiteAndApi.Models;
+﻿using AdminWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AdminSiteAndApi.Controllers
+namespace AdminWebApp.Controllers
 {
     public class HomeController : Controller
     {
