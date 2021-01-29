@@ -28,7 +28,7 @@ namespace AdminWebAPI
                 options.UseSqlServer(Configuration.GetConnectionString(nameof(McbaContext)));
             });
 
-            services.AddScoped <CustomerManager>();
+            services.AddScoped<CustomerManager>();
             services.AddScoped<AccountManager>();
             services.AddScoped<TransactionManager>();
             services.AddScoped<BillPayManager>();
