@@ -50,8 +50,8 @@ namespace AdminWebApp.Controllers
             var response2 = await Client.GetAsync($"api/accounts/customer/{id}");
             if (!response.IsSuccessStatusCode)
                 throw new Exception();
-            var result2 = await response.Content.ReadAsStringAsync();
-            var accounts = JsonConvert.DeserializeObject<List<Account>>(result);
+            var result2 = await response2.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(result2);
             // put accounts in ViewBag
             ViewBag.Accounts = accounts;
 
@@ -62,8 +62,8 @@ namespace AdminWebApp.Controllers
                 var response3 = await Client.GetAsync($"api/transactions/account/{id}");
                 if (!response.IsSuccessStatusCode)
                     throw new Exception();
-                var result3 = await response.Content.ReadAsStringAsync();
-                var transactionsForAccount = JsonConvert.DeserializeObject<List<Transaction>>(result);
+                var result3 = await response3.Content.ReadAsStringAsync();
+                var transactionsForAccount = JsonConvert.DeserializeObject<List<Transaction>>(result3);
                 foreach (var entry in transactionsForAccount)
                 {
                     transactions.Add(entry);
