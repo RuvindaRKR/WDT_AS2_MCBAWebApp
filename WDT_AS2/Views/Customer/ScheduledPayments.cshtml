@@ -37,7 +37,10 @@
             {
                 <tr>
                     <td>
-                        <a class="btn btn-primary" asp-action="ModifyBillPay" asp-route-id="@billpay.BillPayID">Modify</a>
+                        @if (billpay.Status == Status.Pending)
+                        {
+                            <a class="btn btn-primary" asp-action="ModifyBillPay" asp-route-id="@billpay.BillPayID">Modify</a>
+                        }
                     </td>
                     <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
                     <td>@Html.DisplayFor(x => billpay.Amount)</td>
