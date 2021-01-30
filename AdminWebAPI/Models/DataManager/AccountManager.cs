@@ -50,7 +50,7 @@ namespace AdminWebAPI.Models.DataManager
 
         public IEnumerable<Account> GetCustomer(int id)
         {
-            var accList = _context.Accounts.Where(x => x.AccountNumber == id).ToList();
+            var accList = _context.Accounts.Where(x => x.CustomerID == id).ToList();
             return accList;
         }
     }
