@@ -26,13 +26,12 @@ namespace AdminWebAPI
             services.AddDbContext<McbaContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString(nameof(McbaContext)));
-
-                // Enable lazy loading.
-                options.UseLazyLoadingProxies();
             });
 
-            // services.AddScoped<*DataManagerClassHere*>();
-            // services.AddTransient<*DataManagerClassHere*>();
+            services.AddScoped<CustomerManager>();
+            services.AddScoped<AccountManager>();
+            services.AddScoped<TransactionManager>();
+            services.AddScoped<BillPayManager>();
 
             services.AddControllers();
         }

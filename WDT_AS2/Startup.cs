@@ -39,9 +39,6 @@ namespace WDT_AS2
                 options.Cookie.IsEssential = true;
             });
 
-            // Add people background service to automatically run in the background along-side the web-server.
-            services.AddHostedService<BillPayBackgroundService>();
-
             services.AddControllersWithViews();
         }
 

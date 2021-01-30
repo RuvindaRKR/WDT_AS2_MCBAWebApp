@@ -2,15 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AdminWebAPI.Utilities;
 
 namespace AdminWebAPI.Models
 {
-    public enum AccountType
-    {
-        Checking = 1,
-        Saving = 2
-    }
-
     public class Account
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]

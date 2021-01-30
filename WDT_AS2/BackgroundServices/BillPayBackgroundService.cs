@@ -60,6 +60,7 @@ namespace WDT_AS2.BackgroundServices
                                 new Transaction
                                 {
                                     TransactionType = TransactionType.BillPay,
+                                    DestinationAccountNumber = BillPay.PayeeID,
                                     Amount = BillPay.Amount,
                                     TransactionTimeUtc = DateTime.UtcNow
                                 });
