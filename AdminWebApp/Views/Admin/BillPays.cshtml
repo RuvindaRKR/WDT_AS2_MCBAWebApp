@@ -1,0 +1,68 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@using AdminWebApp.Utilities
+@model IPagedList<BillPay>
+@{
+    ViewData["Title"] = "BillPays";
+}
+
+<div>
+    <h1 class="display-4">BillPays</h1>
+    <br />
+    <br />
+    <h3>Billpays</h3>
+    <br />
+    <form asp-action="Billpays" asp-controller="Admin" method="get">
+        Start Date : <input type="datetime-local" name="d1" />
+        End Date : <input type="datetime-local" name="d2" />
+        Search ID : <input type="text" name="SearchString" value="@ViewBag.SearchString" />
+        <input type="submit" value="Filter" class="btn btn-success" />
+        <a asp-action="Billpays" class="btn btn-success">Get All Records</a>
+        <div>
+            <table class="table">
+                <tr>
+                    <th>@Html.DisplayNameFor(x => Model[0].BillPayID)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].AccountNumber)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].PayeeID)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Amount)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Status)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].ScheduleDate)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Period)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].ModifyDate)</th>
+                    <th></th>
+                </tr>
+                @foreach (var billpay in Model)
+                {
+            <tr>
+                <td>@Html.DisplayFor(x => billpay.BillPayID)</td>
+                <td>@Html.DisplayFor(x => billpay.AccountNumber)</td>
+                <td>@Html.DisplayFor(x => billpay.PayeeID)</td>
+                <td>@Html.DisplayFor(x => billpay.Amount)</td>
+                <td>@Html.DisplayFor(x => billpay.Status)</td>
+                <td>@Html.DisplayFor(x => billpay.ScheduleDate)</td>
+                <td>@Html.DisplayFor(x => billpay.Period)</td>
+                <td>@Html.DisplayFor(x => billpay.ModifyDate)</td>
+                <td>
+                    @if (billpay.Status == Status.Pending)
+                    {
+                        <a class="btn btn-primary">Block</a>
+                    }
+                    @*@if (billpay.Status == Status.Blocked)
+                    {
+                        <a class="btn btn-primary">Unblock</a>
+                    }*@
+                </td>
+            </tr>
+                }
+            </table>
+
+            @Html.PagedListPager(Model, page => Url.Action("BillPays", new { page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" }
+                })
+        </div>
+    </form>
+</div>

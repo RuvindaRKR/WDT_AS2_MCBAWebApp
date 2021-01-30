@@ -38,12 +38,13 @@ namespace AdminWebApp.Controllers
 
         public async Task<IActionResult> Transactions(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
-            // Start by gathering info needed to populate customer filter
+            // Start by gathering info needed to populate customer filter ############### CURRENTLY UNUSED
             var customersResponse = await Client.GetAsync($"api/customers");
             if (!customersResponse.IsSuccessStatusCode)
                 throw new Exception();
             var customersResult = await customersResponse.Content.ReadAsStringAsync();
             var customers = JsonConvert.DeserializeObject<List<Customer>>(customersResult);
+            ViewBag.Customers = customers;
 
             // Here we start gathering info we need to generate tables
             var transactionsResponse = await Client.GetAsync($"api/transactions");
@@ -61,7 +62,7 @@ namespace AdminWebApp.Controllers
                 ViewBag.SearchString = SearchString;
             }
 
-            // check user filter
+            // check customer filter ############### CURRENTLY UNUSED
             List<int> accountNumbers = new();
             if (id.HasValue)
             {
@@ -103,7 +104,7 @@ namespace AdminWebApp.Controllers
                         sortedTransactions.Remove(transaction);
                 }
 
-                // filter based on user
+                // filter based on customer ############### CURRENTLY UNUSED
                 if (id.HasValue)
                 {
                     if (!accountNumbers.Exists(x => x == transaction.AccountNumber))
@@ -118,6 +119,91 @@ namespace AdminWebApp.Controllers
             var transactionsListPaged = await sortedTransactions.ToPagedListAsync((int)page, pageSize);
 
             return View(transactionsListPaged);
+        }
+
+        public async Task<IActionResult> BillPays(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
+        {
+            // Start by gathering info needed to populate customer filter ############### CURRENTLY UNUSED
+            var customersResponse = await Client.GetAsync($"api/customers");
+            if (!customersResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var customersResult = await customersResponse.Content.ReadAsStringAsync();
+            var customers = JsonConvert.DeserializeObject<List<Customer>>(customersResult);
+            ViewBag.Customers = customers;
+
+            // Here we start gathering info we need to generate tables
+            var billpaysResponse = await Client.GetAsync($"api/billpays");
+            if (!billpaysResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var billpaysResult = await billpaysResponse.Content.ReadAsStringAsync();
+            var billpays = JsonConvert.DeserializeObject<List<BillPay>>(billpaysResult);
+            List<BillPay> sortedBillpays = billpays.OrderByDescending(t => t.ScheduleDate).ToList();
+            // at this point we have all billpays sorted in sortedBillpays
+
+            // check search string
+            if (!int.TryParse(SearchString, out var searchID))
+            {
+                ModelState.AddModelError(nameof(SearchString), "Invalid Input");
+                ViewBag.SearchString = SearchString;
+            }
+
+            // check customer filter ############### CURRENTLY UNUSED
+            List<int> accountNumbers = new();
+            if (id.HasValue)
+            {
+                var accountsResponse = await Client.GetAsync($"api/accounts/customer/{id}");
+                if (!accountsResponse.IsSuccessStatusCode)
+                    throw new Exception();
+                var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+                var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+                foreach (var account in accounts)
+                {
+                    accountNumbers.Add(account.AccountNumber);
+                }
+            }
+
+            // now we remove unneccessary transactions from list
+            foreach (var billpay in sortedBillpays.ToList())
+            {
+                // this removes billpays that dont match search string
+                if (!String.IsNullOrEmpty(SearchString))
+                {
+                    if (billpay.BillPayID != searchID)
+                        sortedBillpays.Remove(billpay);
+                }
+
+                // this removes billpays that dont meet the date filters
+                if (d1.HasValue && d2.HasValue)
+                {
+                    if (DateTime.Compare((DateTime)d1, billpay.ScheduleDate) > 0 && DateTime.Compare((DateTime)d2, billpay.ScheduleDate) < 0)
+                        sortedBillpays.Remove(billpay);
+                }
+                else if (d1.HasValue)
+                {
+                    if (DateTime.Compare((DateTime)d1, billpay.ScheduleDate) > 0)
+                        sortedBillpays.Remove(billpay);
+                }
+                else if (d2.HasValue)
+                {
+                    if (DateTime.Compare((DateTime)d2, billpay.ScheduleDate) < 0)
+                        sortedBillpays.Remove(billpay);
+                }
+
+                // filter based on customer ############### CURRENTLY UNUSED
+                if (id.HasValue)
+                {
+                    if (!accountNumbers.Exists(x => x == billpay.AccountNumber))
+                    {
+                        sortedBillpays.Remove(billpay);
+                    }
+                }
+            }
+
+            // finally page it
+            int pageSize = 10;
+            var billpaysListPaged = await sortedBillpays.ToPagedListAsync((int)page, pageSize);
+
+            return View(billpaysListPaged);
         }
     }
 }
