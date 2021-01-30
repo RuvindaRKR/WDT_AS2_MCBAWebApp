@@ -39,6 +39,9 @@ namespace WDT_AS2
                 options.Cookie.IsEssential = true;
             });
 
+            //Run background service
+            services.AddHostedService<BillPayBackgroundService>();
+
             services.AddControllersWithViews();
         }
 

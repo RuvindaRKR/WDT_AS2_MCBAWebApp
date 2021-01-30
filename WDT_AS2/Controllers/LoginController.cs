@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WDT_AS2.Data;
 using WDT_AS2.Models;
 using SimpleHashing;
+using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Controllers
 {
@@ -20,9 +21,16 @@ namespace WDT_AS2.Controllers
         public async Task<IActionResult> Login(string loginID, string password)
         {
             var login = await _context.Logins.FindAsync(loginID);
+            var customer = await _context.Customers.FindAsync(login.CustomerID);
+
             if(login == null || !PBKDF2.Verify(login.PasswordHash, password))
             { 
                 ModelState.AddModelError("LoginFailed", "Login failed, please try again.");
+                return View(new Login { LoginID = loginID });
+            }
+            if(customer.AccountStatus == AccountStatus.Locked)
+            {
+                ModelState.AddModelError("LoginFailed", "Login failed, your account is locked.");
                 return View(new Login { LoginID = loginID });
             }
 
