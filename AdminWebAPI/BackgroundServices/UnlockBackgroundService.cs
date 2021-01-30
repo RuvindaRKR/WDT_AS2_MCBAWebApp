@@ -43,7 +43,8 @@ namespace AdminWebAPI.BackgroundServices
             {
                 if (customer.AccountStatus == AccountStatus.Locked)
                 {
-                    context.Customers.Update(Unlock(customer));
+                    _logger.LogInformation($"here : {customer.CustomerID}");
+                    //context.Customers.Update(Unlock(customer));
                 }
             }
             await context.SaveChangesAsync(cancellationToken);
