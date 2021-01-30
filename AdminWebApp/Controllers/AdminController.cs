@@ -36,76 +36,84 @@ namespace AdminWebApp.Controllers
             return View(customerListPaged);
         }
 
-        public async Task<IActionResult> CustomerTransactions(int id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
+        public async Task<IActionResult> Transactions(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
-            // get customer details and put in viewbag
-            var response = await Client.GetAsync($"api/customers/{id}");
-            if (!response.IsSuccessStatusCode)
+            // Start by gathering info needed to populate customer filter
+            var customersResponse = await Client.GetAsync($"api/customers");
+            if (!customersResponse.IsSuccessStatusCode)
                 throw new Exception();
-            var result = await response.Content.ReadAsStringAsync();
-            var customer = JsonConvert.DeserializeObject<Customer>(result);
-            ViewBag.Customer = customer;
+            var customersResult = await customersResponse.Content.ReadAsStringAsync();
+            var customers = JsonConvert.DeserializeObject<List<Customer>>(customersResult);
 
-            // make request to api for accounts of the specified customer
-            var response2 = await Client.GetAsync($"api/accounts");
-            if (!response2.IsSuccessStatusCode)
+            // Here we start gathering info we need to generate tables
+            var transactionsResponse = await Client.GetAsync($"api/transactions");
+            if (!transactionsResponse.IsSuccessStatusCode)
                 throw new Exception();
-            var result2 = await response2.Content.ReadAsStringAsync();
-            var accounts = JsonConvert.DeserializeObject<List<Account>>(result2);
+            var transactionsResult = await transactionsResponse.Content.ReadAsStringAsync();
+            var transactions = JsonConvert.DeserializeObject<List<Transaction>>(transactionsResult);
+            List<Transaction> sortedTransactions = transactions.OrderByDescending(t => t.TransactionTimeUtc).ToList();
+            // at this point we have all transactions sorted in sortedTransactions
 
+            // check search string
             if (!int.TryParse(SearchString, out var searchID))
             {
                 ModelState.AddModelError(nameof(SearchString), "Invalid Input");
                 ViewBag.SearchString = SearchString;
             }
-                // for each account, take each transaction and add it to the transactions list
-                List<Transaction> transactions = new();
 
-            foreach (var account in accounts)
+            // check user filter
+            List<int> accountNumbers = new();
+            if (id.HasValue)
             {
-                if(account.CustomerID == id)
+                var accountsResponse = await Client.GetAsync($"api/accounts/customer/{id}");
+                if (!accountsResponse.IsSuccessStatusCode)
+                    throw new Exception();
+                var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+                var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+                foreach (var account in accounts)
                 {
-                    var response3 = await Client.GetAsync($"api/transactions");
-                    if (!response3.IsSuccessStatusCode)
-                        throw new Exception();
-                    var result3 = await response3.Content.ReadAsStringAsync();
-                    var transactionsForAccount = JsonConvert.DeserializeObject<List<Transaction>>(result3);
-                    foreach (var entry in transactionsForAccount)
-                    {
+                    accountNumbers.Add(account.AccountNumber);
+                }
+            }
 
-                        //Get transactions that fit in the Filter parameters
-                        if (entry.AccountNumber == account.AccountNumber)
-                        {
-                            if (!String.IsNullOrEmpty(SearchString))
-                            {
-                                if (entry.TransactionID == searchID)
-                                    transactions.Add(entry);
-                            }
-                            else if (d1.HasValue && d2.HasValue)
-                            {
-                                if (DateTime.Compare((DateTime)d1, entry.TransactionTimeUtc) <= 0 && DateTime.Compare((DateTime)d2, entry.TransactionTimeUtc) >= 0)
-                                    transactions.Add(entry);
-                            }
-                            else if (d1.HasValue)
-                            {
-                                if (DateTime.Compare((DateTime)d1, entry.TransactionTimeUtc) <= 0)
-                                    transactions.Add(entry);
-                            }
-                            else if (d2.HasValue)
-                            {
-                                if (DateTime.Compare((DateTime)d2, entry.TransactionTimeUtc) >= 0)
-                                    transactions.Add(entry);
-                            }
-                            else
-                                transactions.Add(entry);
-                        }
+            // now we remove unneccessary transactions from list
+            foreach (var transaction in sortedTransactions.ToList())
+            {
+                // this removes transactions that dont match search string
+                if (!String.IsNullOrEmpty(SearchString))
+                {
+                    if (transaction.TransactionID != searchID)
+                        sortedTransactions.Remove(transaction);
+                }
+
+                // this removes transactions that dont meet the date filters
+                if (d1.HasValue && d2.HasValue)
+                {
+                    if (DateTime.Compare((DateTime)d1, transaction.TransactionTimeUtc) > 0 && DateTime.Compare((DateTime)d2, transaction.TransactionTimeUtc) < 0)
+                        sortedTransactions.Remove(transaction);
+                }
+                else if (d1.HasValue)
+                {
+                    if (DateTime.Compare((DateTime)d1, transaction.TransactionTimeUtc) > 0)
+                        sortedTransactions.Remove(transaction);
+                }
+                else if (d2.HasValue)
+                {
+                    if (DateTime.Compare((DateTime)d2, transaction.TransactionTimeUtc) < 0)
+                        sortedTransactions.Remove(transaction);
+                }
+
+                // filter based on user
+                if (id.HasValue)
+                {
+                    if (!accountNumbers.Exists(x => x == transaction.AccountNumber))
+                    {
+                        sortedTransactions.Remove(transaction);
                     }
                 }
-                
             }
-            // sort the transactions list so that they are ordered by transaction time
-            List<Transaction> sortedTransactions = transactions.OrderBy(t => t.TransactionTimeUtc).ToList();
 
+            // finally page it
             int pageSize = 10;
             var transactionsListPaged = await sortedTransactions.ToPagedListAsync((int)page, pageSize);
 

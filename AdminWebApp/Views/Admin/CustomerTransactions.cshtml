@@ -4,24 +4,24 @@
 @model IPagedList<Transaction>
 @{
     ViewData["Title"] = "Customer Transactions";
-    var customer = ViewBag.Customer;
-    var accounts = ViewBag.Accounts;
+    //var customer = ViewBag.Customer;
+    //var accounts = ViewBag.Accounts;
 }
 
 <div>
-    <h1 class="display-4">Showing Transactions for @customer.CustomerName</h1>
+    <h1 class="display-4">Transactions</h1>
     <br />
     <br />
     <h3>Transactions</h3>
     <br />
     <form asp-action="CustomerTransactions" asp-controller="Admin" method="get">
-        <input type="hidden" name="@customer.CustomerID" />
-        Start Date : <input type="datetime-local" name="d1" />
+        @*<input type="hidden" name="@customer.CustomerID" />*@
+        <!--Start Date : <input type="datetime-local" name="d1" />
         End Date : <input type="datetime-local" name="d2" />
         Search ID : <input type="text" name="SearchString" value="@ViewBag.SearchString" />
         <input type="submit" value="Filter" class="btn btn-success" />
-        <a asp-action="CustomerTransactions" asp-route-id="@customer.CustomerID" class="btn btn-success">Get All Records</a>
-
+        <a asp-action="CustomerTransactions" class="btn btn-success">Get All Records</a>-->
+        @*asp-route-id="@customer.CustomerID"*@
         <div>
             <table class="table">
                 <tr>

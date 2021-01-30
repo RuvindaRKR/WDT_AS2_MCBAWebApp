@@ -56,7 +56,7 @@ namespace AdminWebAPI.Controllers
         }
 
         //GET: /Accounts/Customer/1
-        [HttpGet("Customer/{id}")]
+        [HttpGet("customer/{id}")]
         public IEnumerable<Account> GetCustomer(int id)
         {
             return _repo.GetCustomer(id);
