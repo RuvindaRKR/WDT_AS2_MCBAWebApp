@@ -28,7 +28,7 @@ namespace AdminWebAPI.BackgroundServices
             while (!cancellationToken.IsCancellationRequested)
             {
                 await DoWork(cancellationToken);
-                await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+                await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
             }
         }
 
@@ -44,7 +44,7 @@ namespace AdminWebAPI.BackgroundServices
                 if (customer.AccountStatus == AccountStatus.Locked)
                 {
                     _logger.LogInformation($"here : {customer.CustomerID}");
-                    //context.Customers.Update(Unlock(customer));
+                    customer.AccountStatus = AccountStatus.UnLocked;
                 }
             }
             await context.SaveChangesAsync(cancellationToken);
@@ -52,11 +52,5 @@ namespace AdminWebAPI.BackgroundServices
             _logger.LogInformation("Account Unlock Background Service is work complete.");
         }
 
-        private Customer Unlock(Customer customer)
-        {
-            customer = customer with { AccountStatus = AccountStatus.UnLocked };
-            return customer;
-
-        }
     }
 }

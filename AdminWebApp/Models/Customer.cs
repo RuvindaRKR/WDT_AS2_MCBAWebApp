@@ -5,34 +5,34 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AdminWebApp.Models
 {
-    public record Customer
+    public class Customer
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CustomerID { get; init; }
+        public int CustomerID { get; set; }
 
         [Required, StringLength(50)]
-        public string CustomerName { get; init; }
+        public string CustomerName { get; set; }
 
         [StringLength(11)]
-        public string TFN { get; init; }
+        public string TFN { get; set; }
 
         [StringLength(50)]
-        public string Address { get; init; }
+        public string Address { get; set; }
 
         [StringLength(40)]
-        public string City { get; init; }
+        public string City { get; set; }
 
         [StringLength(20)]
-        public string State { get; init; }
+        public string State { get; set; }
 
         [StringLength(10)]
-        public string PostCode { get; init; }
+        public string PostCode { get; set; }
 
         [StringLength(15)]
-        public string Phone { get; init; }
+        public string Phone { get; set; }
 
-        public AccountStatus AccountStatus { get; init; }
+        public AccountStatus AccountStatus { get; set; }
 
-        public virtual List<Account> Accounts { get; init; }
+        public virtual List<Account> Accounts { get; set; }
     }
 }

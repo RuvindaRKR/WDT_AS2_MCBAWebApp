@@ -247,10 +247,11 @@ namespace AdminWebApp.Controllers
             var result = await response.Content.ReadAsStringAsync();
             var customer = JsonConvert.DeserializeObject<Customer>(result);
 
-            customer = customer with { AccountStatus = AccountStatus.Locked };
+            // lock account
+            customer.AccountStatus = AccountStatus.Locked;
 
+            // update database through api
             var content = new StringContent(JsonConvert.SerializeObject(customer), Encoding.UTF8, "application/json");
-
             var response1 = Client.PutAsync("api/customers", content).Result;
 
             if (response1.IsSuccessStatusCode)
