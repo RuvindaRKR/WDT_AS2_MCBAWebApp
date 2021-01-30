@@ -18,7 +18,8 @@
     {
         Pending = 1,
         Complete = 2,
-        Failed = 3
+        Failed = 3,
+        Set = 4
     }
 
     public enum AccountType

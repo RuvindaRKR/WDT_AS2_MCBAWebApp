@@ -14,34 +14,45 @@
     <br />
     <h3>Transactions</h3>
     <br />
-    <div>
-        <table class="table">
-            <tr>
-                <th>@Html.DisplayNameFor(x => Model[0].TransactionID)</th>
-                <th>@Html.DisplayNameFor(x => Model[0].TransactionType)</th>
-                <th>@Html.DisplayNameFor(x => Model[0].DestinationAccountNumber)</th>
-                <th>@Html.DisplayNameFor(x => Model[0].Amount)</th>
-                <th>@Html.DisplayNameFor(x => Model[0].Comment)</th>
-                <th>@Html.DisplayNameFor(x => Model[0].TransactionTimeUtc)</th>
-            </tr>
-            @foreach (var transaction in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(x => transaction.TransactionID)</td>
-                    <td>@Html.DisplayFor(x => transaction.TransactionType)</td>
-                    <td>@Html.DisplayFor(x => transaction.DestinationAccountNumber)</td>
-                    <td>@Html.DisplayFor(x => transaction.Amount)</td>
-                    <td>@Html.DisplayFor(x => transaction.Comment)</td>
-                    <td>@Html.DisplayFor(x => transaction.TransactionTimeUtc)</td>
-                </tr>
-            }
-        </table>
+    <form asp-action="CustomerTransactions" asp-controller="Admin" method="get">
+        <input type="hidden" name="@customer.CustomerID" />
+        Start Date : <input type="datetime-local" name="d1" />
+        End Date : <input type="datetime-local" name="d2" />
+        Search ID : <input type="text" name="SearchString" value="@ViewBag.SearchString" />
+        <input type="submit" value="Filter" class="btn btn-success" />
+        <a asp-action="CustomerTransactions" asp-route-id="@customer.CustomerID" class="btn btn-success">Get All Records</a>
 
-        @Html.PagedListPager(Model, page => Url.Action("CustomerTransactions", new { page }),
-            new PagedListRenderOptions
-            {
-                LiElementClasses = new[] { "page-item" },
-                PageClasses = new[] { "page-link" }
-            })
-    </div>
+        <div>
+            <table class="table">
+                <tr>
+                    <th>@Html.DisplayNameFor(x => Model[0].TransactionID)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].AccountNumber)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].TransactionType)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].DestinationAccountNumber)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Amount)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Comment)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].TransactionTimeUtc)</th>
+                </tr>
+                @foreach (var transaction in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(x => transaction.TransactionID)</td>
+                        <td>@Html.DisplayFor(x => transaction.AccountNumber)</td>
+                        <td>@Html.DisplayFor(x => transaction.TransactionType)</td>
+                        <td>@Html.DisplayFor(x => transaction.DestinationAccountNumber)</td>
+                        <td>@Html.DisplayFor(x => transaction.Amount)</td>
+                        <td>@Html.DisplayFor(x => transaction.Comment)</td>
+                        <td>@Html.DisplayFor(x => transaction.TransactionTimeUtc)</td>
+                    </tr>
+                }
+            </table>
+
+            @Html.PagedListPager(Model, page => Url.Action("CustomerTransactions", new { page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" }
+                })
+        </div>
+    </form>
 </div>

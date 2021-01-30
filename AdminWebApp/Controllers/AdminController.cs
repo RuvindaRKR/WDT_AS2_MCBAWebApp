@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using AdminWebApp.Models;
 using Newtonsoft.Json;
 using X.PagedList;
-
+using AdminWebApp.Utilities;
 
 namespace AdminWebApp.Controllers
 {
@@ -36,7 +36,7 @@ namespace AdminWebApp.Controllers
             return View(customerListPaged);
         }
 
-        public async Task<IActionResult> CustomerTransactions(int id, int? page = 1)
+        public async Task<IActionResult> CustomerTransactions(int id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
             // get customer details and put in viewbag
             var response = await Client.GetAsync($"api/customers/{id}");
@@ -53,8 +53,13 @@ namespace AdminWebApp.Controllers
             var result2 = await response2.Content.ReadAsStringAsync();
             var accounts = JsonConvert.DeserializeObject<List<Account>>(result2);
 
-            // for each account, take each transaction and add it to the transactions list
-            List<Transaction> transactions = new();
+            if (!int.TryParse(SearchString, out var searchID))
+            {
+                ModelState.AddModelError(nameof(SearchString), "Invalid Input");
+                ViewBag.SearchString = SearchString;
+            }
+                // for each account, take each transaction and add it to the transactions list
+                List<Transaction> transactions = new();
 
             foreach (var account in accounts)
             {
@@ -67,8 +72,33 @@ namespace AdminWebApp.Controllers
                     var transactionsForAccount = JsonConvert.DeserializeObject<List<Transaction>>(result3);
                     foreach (var entry in transactionsForAccount)
                     {
-                        if(entry.AccountNumber == account.AccountNumber)
-                            transactions.Add(entry);
+
+                        //Get transactions that fit in the Filter parameters
+                        if (entry.AccountNumber == account.AccountNumber)
+                        {
+                            if (!String.IsNullOrEmpty(SearchString))
+                            {
+                                if (entry.TransactionID == searchID)
+                                    transactions.Add(entry);
+                            }
+                            else if (d1.HasValue && d2.HasValue)
+                            {
+                                if (DateTime.Compare((DateTime)d1, entry.TransactionTimeUtc) <= 0 && DateTime.Compare((DateTime)d2, entry.TransactionTimeUtc) >= 0)
+                                    transactions.Add(entry);
+                            }
+                            else if (d1.HasValue)
+                            {
+                                if (DateTime.Compare((DateTime)d1, entry.TransactionTimeUtc) <= 0)
+                                    transactions.Add(entry);
+                            }
+                            else if (d2.HasValue)
+                            {
+                                if (DateTime.Compare((DateTime)d2, entry.TransactionTimeUtc) >= 0)
+                                    transactions.Add(entry);
+                            }
+                            else
+                                transactions.Add(entry);
+                        }
                     }
                 }
                 
@@ -76,7 +106,7 @@ namespace AdminWebApp.Controllers
             // sort the transactions list so that they are ordered by transaction time
             List<Transaction> sortedTransactions = transactions.OrderBy(t => t.TransactionTimeUtc).ToList();
 
-            int pageSize = 4;
+            int pageSize = 10;
             var transactionsListPaged = await sortedTransactions.ToPagedListAsync((int)page, pageSize);
 
             return View(transactionsListPaged);
