@@ -23,23 +23,28 @@
                 <th>@Html.DisplayNameFor(x => Model[0].State):</th>
                 <th>@Html.DisplayNameFor(x => Model[0].PostCode):</th>
                 <th>@Html.DisplayNameFor(x => Model[0].Phone):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].AccountStatus):</th>
                 <th></th>
             </tr>
             @foreach (var customer in Model)
             {
-                <tr>
-                    <td>@Html.DisplayFor(x => customer.CustomerID)</td>
-                    <td>@Html.DisplayFor(x => customer.CustomerName)</td>
-                    <td>@Html.DisplayFor(x => customer.TFN)</td>
-                    <td>@Html.DisplayFor(x => customer.Address)</td>
-                    <td>@Html.DisplayFor(x => customer.City)</td>
-                    <td>@Html.DisplayFor(x => customer.State)</td>
-                    <td>@Html.DisplayFor(x => customer.PostCode)</td>
-                    <td>@Html.DisplayFor(x => customer.Phone)</td>
-                    <td>
-                        <a class="btn btn-primary" asp-action="CustomerTransactions" asp-route-id="@customer.CustomerID">View Transactions</a>
-                    </td>
-                </tr>
+        <tr>
+            <td>@Html.DisplayFor(x => customer.CustomerID)</td>
+            <td>@Html.DisplayFor(x => customer.CustomerName)</td>
+            <td>@Html.DisplayFor(x => customer.TFN)</td>
+            <td>@Html.DisplayFor(x => customer.Address)</td>
+            <td>@Html.DisplayFor(x => customer.City)</td>
+            <td>@Html.DisplayFor(x => customer.State)</td>
+            <td>@Html.DisplayFor(x => customer.PostCode)</td>
+            <td>@Html.DisplayFor(x => customer.Phone)</td>
+            <td>@Html.DisplayFor(x => customer.AccountStatus)</td>
+            <td>
+                <a class="btn btn-primary"
+                   asp-action="Transactions" asp-route-customerid="@customer.CustomerID">View Transactions</a>
+                <a class="btn btn-primary"
+                   asp-action="LockUser" asp-route-id="@customer.CustomerID">Lock</a>
+            </td>
+        </tr>
             }
         </table>
 

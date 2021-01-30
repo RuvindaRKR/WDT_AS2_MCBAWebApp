@@ -18,7 +18,9 @@
     {
         Pending = 1,
         Complete = 2,
-        Failed = 3
+        Failed = 3,
+        Set = 4,
+        Blocked = 5
     }
 
     public enum AccountType
@@ -34,5 +36,11 @@
         Transfer = 3,
         ServiceCharge = 4,
         BillPay = 5
+    }
+
+    public enum AccountStatus
+    {
+        Locked = 1,
+        UnLocked = 2
     }
 }

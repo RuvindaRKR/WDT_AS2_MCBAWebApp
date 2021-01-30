@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WDT_AS2.Data;
 
 namespace WDT_AS2.Migrations
 {
     [DbContext(typeof(McbaContext))]
-    partial class McbaContextModelSnapshot : ModelSnapshot
+    [Migration("20210130101135_InitialCreate1")]
+    partial class InitialCreate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +24,9 @@ namespace WDT_AS2.Migrations
             modelBuilder.Entity("WDT_AS2.Models.Account", b =>
                 {
                     b.Property<int>("AccountNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AccountStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("AccountType")
@@ -87,9 +92,6 @@ namespace WDT_AS2.Migrations
             modelBuilder.Entity("WDT_AS2.Models.Customer", b =>
                 {
                     b.Property<int>("CustomerID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AccountStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
