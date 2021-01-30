@@ -36,14 +36,14 @@ namespace AdminWebApp.Controllers
             return View(customerListPaged);
         }
 
-        public async Task<IActionResult> Transactions(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
+        public async Task<IActionResult> Transactions(int? customerid, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
             // Save filters in ViewBag
-            if (id.HasValue) { ViewBag.ID = id; } // UNUSED
+            if (customerid.HasValue) { ViewBag.ID = customerid; }
             if (d1.HasValue) { ViewBag.D1 = d1; }
             if (d2.HasValue) { ViewBag.D2 = d2; }
 
-            // Start by gathering info needed to populate customer filter ############### CURRENTLY UNUSED
+            // Start by gathering info needed to populate customer filter
             var customersResponse = await Client.GetAsync($"api/customers");
             if (!customersResponse.IsSuccessStatusCode)
                 throw new Exception();
@@ -67,18 +67,21 @@ namespace AdminWebApp.Controllers
                 ViewBag.SearchString = SearchString;
             }
 
-            // check customer filter ############### CURRENTLY UNUSED
+            // check customer filter
             List<int> accountNumbers = new();
-            if (id.HasValue)
+            if (customerid.HasValue)
             {
-                var accountsResponse = await Client.GetAsync($"api/accounts/customer/{id}");
+                var accountsResponse = await Client.GetAsync($"api/accounts/");
                 if (!accountsResponse.IsSuccessStatusCode)
                     throw new Exception();
                 var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
                 var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
                 foreach (var account in accounts)
                 {
-                    accountNumbers.Add(account.AccountNumber);
+                    if (account.CustomerID == customerid)
+                    {
+                        accountNumbers.Add(account.AccountNumber);
+                    }
                 }
             }
 
@@ -109,8 +112,8 @@ namespace AdminWebApp.Controllers
                         sortedTransactions.Remove(transaction);
                 }
 
-                // filter based on customer ############### CURRENTLY UNUSED
-                if (id.HasValue)
+                // filter based on customer
+                if (customerid.HasValue)
                 {
                     if (!accountNumbers.Exists(x => x == transaction.AccountNumber))
                     {
@@ -126,14 +129,14 @@ namespace AdminWebApp.Controllers
             return View(transactionsListPaged);
         }
 
-        public async Task<IActionResult> BillPays(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
+        public async Task<IActionResult> BillPays(int? customerid, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
             // Save filters in ViewBag
-            if (id.HasValue) { ViewBag.ID = id; } // UNUSED
+            if (customerid.HasValue) { ViewBag.ID = customerid; }
             if (d1.HasValue) { ViewBag.D1 = d1; }
             if (d2.HasValue) { ViewBag.D2 = d2; }
 
-            // Start by gathering info needed to populate customer filter ############### CURRENTLY UNUSED
+            // Start by gathering info needed to populate customer filter
             var customersResponse = await Client.GetAsync($"api/customers");
             if (!customersResponse.IsSuccessStatusCode)
                 throw new Exception();
@@ -157,18 +160,21 @@ namespace AdminWebApp.Controllers
                 ViewBag.SearchString = SearchString;
             }
 
-            // check customer filter ############### CURRENTLY UNUSED
+            // check customer filter
             List<int> accountNumbers = new();
-            if (id.HasValue)
+            if (customerid.HasValue)
             {
-                var accountsResponse = await Client.GetAsync($"api/accounts/customer/{id}");
+                var accountsResponse = await Client.GetAsync($"api/accounts/");
                 if (!accountsResponse.IsSuccessStatusCode)
                     throw new Exception();
                 var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
                 var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
                 foreach (var account in accounts)
                 {
-                    accountNumbers.Add(account.AccountNumber);
+                    if (account.CustomerID == customerid)
+                    {
+                        accountNumbers.Add(account.AccountNumber);
+                    }
                 }
             }
 
@@ -199,8 +205,8 @@ namespace AdminWebApp.Controllers
                         sortedBillpays.Remove(billpay);
                 }
 
-                // filter based on customer ############### CURRENTLY UNUSED
-                if (id.HasValue)
+                // filter based on customer
+                if (customerid.HasValue)
                 {
                     if (!accountNumbers.Exists(x => x == billpay.AccountNumber))
                     {
