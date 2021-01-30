@@ -38,6 +38,11 @@ namespace AdminWebApp.Controllers
 
         public async Task<IActionResult> Transactions(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
+            // Save filters in ViewBag
+            if (id.HasValue) { ViewBag.ID = id; } // UNUSED
+            if (d1.HasValue) { ViewBag.D1 = d1; }
+            if (d2.HasValue) { ViewBag.D2 = d2; }
+
             // Start by gathering info needed to populate customer filter ############### CURRENTLY UNUSED
             var customersResponse = await Client.GetAsync($"api/customers");
             if (!customersResponse.IsSuccessStatusCode)
@@ -123,6 +128,11 @@ namespace AdminWebApp.Controllers
 
         public async Task<IActionResult> BillPays(int? id, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         {
+            // Save filters in ViewBag
+            if (id.HasValue) { ViewBag.ID = id; } // UNUSED
+            if (d1.HasValue) { ViewBag.D1 = d1; }
+            if (d2.HasValue) { ViewBag.D2 = d2; }
+
             // Start by gathering info needed to populate customer filter ############### CURRENTLY UNUSED
             var customersResponse = await Client.GetAsync($"api/customers");
             if (!customersResponse.IsSuccessStatusCode)

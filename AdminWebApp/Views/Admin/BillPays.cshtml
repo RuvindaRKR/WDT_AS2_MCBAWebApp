@@ -14,9 +14,9 @@
     <h3>Billpays</h3>
     <br />
     <form asp-action="Billpays" asp-controller="Admin" method="get">
-        Start Date : <input type="datetime-local" name="d1" />
-        End Date : <input type="datetime-local" name="d2" />
-        Search ID : <input type="text" name="SearchString" value="@ViewBag.SearchString" />
+        Start Date : <input type="datetime-local" name="d1"/>
+        End Date : <input type="datetime-local" name="d2"/>
+        Search ID : <input type="text" name="SearchString" />
         <input type="submit" value="Filter" class="btn btn-success" />
         <a asp-action="Billpays" class="btn btn-success">Get All Records</a>
         <div>
@@ -57,7 +57,7 @@
                 }
             </table>
 
-            @Html.PagedListPager(Model, page => Url.Action("BillPays", new { page }),
+            @Html.PagedListPager(Model, page => Url.Action("BillPays", new { page, d1 = ViewBag.D1, d2 = ViewBag.D2, SearchString = ViewBag.SearchString}),
                 new PagedListRenderOptions
                 {
                     LiElementClasses = new[] { "page-item" },
