@@ -40,7 +40,7 @@
             <td>@Html.DisplayFor(x => customer.AccountStatus)</td>
             <td>
                 <a class="btn btn-primary"
-                   asp-action="CustomerTransactions" asp-route-id="@customer.CustomerID">View Transactions</a>
+                   asp-action="Transactions" asp-route-customerid="@customer.CustomerID">View Transactions</a>
                 <a class="btn btn-primary"
                    asp-action="LockUser" asp-route-id="@customer.CustomerID">Lock</a>
             </td>
