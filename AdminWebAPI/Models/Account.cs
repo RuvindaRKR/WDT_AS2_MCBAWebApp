@@ -22,10 +22,10 @@ namespace AdminWebAPI.Models
         [DataType(DataType.Currency)]
         public decimal Balance { get; set; }
 
-        public DateTime ModifyDate { get; init; }
+        public DateTime ModifyDate { get; set; }
 
         public virtual List<Transaction> Transactions { get; set; }
 
-        public virtual List<BillPay> BillPays { get; init; }
+        public virtual List<BillPay> BillPays { get; set; }
     }
 }

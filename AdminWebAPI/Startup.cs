@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdminWebAPI.Data;
 using AdminWebAPI.Models.DataManager;
+using AdminWebAPI.BackgroundServices;
 
 namespace AdminWebAPI
 {
@@ -32,6 +33,9 @@ namespace AdminWebAPI
             services.AddScoped<AccountManager>();
             services.AddScoped<TransactionManager>();
             services.AddScoped<BillPayManager>();
+
+            //Run background service
+            services.AddHostedService<UnlockBackgroundService>();
 
             services.AddControllers();
         }

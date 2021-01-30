@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AdminWebAPI.Utilities;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,6 +30,8 @@ namespace AdminWebAPI.Models
 
         [StringLength(15)]
         public string Phone { get; init; }
+
+        public AccountStatus AccountStatus { get; init; }
 
         public virtual List<Account> Accounts { get; init; }
     }

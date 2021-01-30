@@ -8,6 +8,7 @@ using AdminWebApp.Models;
 using Newtonsoft.Json;
 using X.PagedList;
 using AdminWebApp.Utilities;
+using System.Text;
 
 namespace AdminWebApp.Controllers
 {
@@ -58,12 +59,12 @@ namespace AdminWebApp.Controllers
                 ModelState.AddModelError(nameof(SearchString), "Invalid Input");
                 ViewBag.SearchString = SearchString;
             }
-                // for each account, take each transaction and add it to the transactions list
-                List<Transaction> transactions = new();
+            // for each account, take each transaction and add it to the transactions list
+            List<Transaction> transactions = new();
 
             foreach (var account in accounts)
             {
-                if(account.CustomerID == id)
+                if (account.CustomerID == id)
                 {
                     var response3 = await Client.GetAsync($"api/transactions");
                     if (!response3.IsSuccessStatusCode)
@@ -101,7 +102,7 @@ namespace AdminWebApp.Controllers
                         }
                     }
                 }
-                
+
             }
             // sort the transactions list so that they are ordered by transaction time
             List<Transaction> sortedTransactions = transactions.OrderBy(t => t.TransactionTimeUtc).ToList();
@@ -110,6 +111,42 @@ namespace AdminWebApp.Controllers
             var transactionsListPaged = await sortedTransactions.ToPagedListAsync((int)page, pageSize);
 
             return View(transactionsListPaged);
+        }
+
+        public async Task<IActionResult> LockUser(int? id)
+        {
+            // get customer details
+            var response = await Client.GetAsync($"api/customers/{id}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            var result = await response.Content.ReadAsStringAsync();
+            var customer = JsonConvert.DeserializeObject<Customer>(result);
+
+            return View(customer);
+        }
+
+        [HttpPost]
+        [ActionName("Lock")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LockUser(int CustomerID)
+        {
+            // get customer details
+            var response = await Client.GetAsync($"api/customers/{CustomerID}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            var result = await response.Content.ReadAsStringAsync();
+            var customer = JsonConvert.DeserializeObject<Customer>(result);
+
+            customer = customer with { AccountStatus = AccountStatus.Locked };
+
+            var content = new StringContent(JsonConvert.SerializeObject(customer), Encoding.UTF8, "application/json");
+
+            var response1 = Client.PutAsync("api/customers", content).Result;
+
+            if (response1.IsSuccessStatusCode)
+                return RedirectToAction("Index");
+
+            return View();
         }
     }
 }

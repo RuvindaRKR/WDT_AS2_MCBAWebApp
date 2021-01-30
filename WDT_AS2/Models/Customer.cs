@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WDT_AS2.Utilities;
 
 namespace WDT_AS2.Models
 {
@@ -29,6 +30,8 @@ namespace WDT_AS2.Models
 
         [StringLength(15)]
         public string Phone { get; init; }
+
+        public AccountStatus AccountStatus { get; init; }
 
         public virtual List<Account> Accounts { get; init; }
     }

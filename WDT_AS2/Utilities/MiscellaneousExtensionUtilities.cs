@@ -36,4 +36,10 @@
         ServiceCharge = 4,
         BillPay = 5
     }
+
+    public enum AccountStatus
+    {
+        Locked = 1,
+        UnLocked = 2
+    }
 }
