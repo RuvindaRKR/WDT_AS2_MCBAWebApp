@@ -3,9 +3,7 @@
 @using X.PagedList.Mvc.Core.Common
 @model IPagedList<Transaction>
 @{
-    ViewData["Title"] = "Customer Transactions";
-    //var customer = ViewBag.Customer;
-    //var accounts = ViewBag.Accounts;
+    ViewData["Title"] = "Transactions";
 }
 
 <div>
@@ -14,14 +12,12 @@
     <br />
     <h3>Transactions</h3>
     <br />
-    <form asp-action="CustomerTransactions" asp-controller="Admin" method="get">
-        @*<input type="hidden" name="@customer.CustomerID" />*@
-        <!--Start Date : <input type="datetime-local" name="d1" />
+    <form asp-action="Transactions" asp-controller="Admin" method="get">
+        Start Date : <input type="datetime-local" name="d1" />
         End Date : <input type="datetime-local" name="d2" />
         Search ID : <input type="text" name="SearchString" value="@ViewBag.SearchString" />
         <input type="submit" value="Filter" class="btn btn-success" />
-        <a asp-action="CustomerTransactions" class="btn btn-success">Get All Records</a>-->
-        @*asp-route-id="@customer.CustomerID"*@
+        <a asp-action="Transactions" class="btn btn-success">Get All Records</a>
         <div>
             <table class="table">
                 <tr>
@@ -47,7 +43,7 @@
                 }
             </table>
 
-            @Html.PagedListPager(Model, page => Url.Action("CustomerTransactions", new { page }),
+            @Html.PagedListPager(Model, page => Url.Action("Transactions", new { page }),
                 new PagedListRenderOptions
                 {
                     LiElementClasses = new[] { "page-item" },
