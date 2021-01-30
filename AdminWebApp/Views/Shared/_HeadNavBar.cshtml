@@ -10,13 +10,13 @@
             <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                 <ul class="navbar-nav">
                     @{
-                        var isLoggedIn = Context.Session.GetInt32(nameof(Customer.CustomerID)).HasValue;
+                        var isLoggedIn = Context.Session.GetInt32("AdminID").HasValue;
                     }
                     @if (isLoggedIn)
                     {
                         <li class="nav-item">
                             <span class="nav-link text-dark">
-                                Welcome, @Context.Session.GetString(nameof(Customer.CustomerName))
+                                Welcome, Admin
                             </span>
                         </li>
                         <li class="nav-item">
