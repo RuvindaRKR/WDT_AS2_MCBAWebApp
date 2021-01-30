@@ -254,10 +254,64 @@ namespace AdminWebApp.Controllers
             var content = new StringContent(JsonConvert.SerializeObject(customer), Encoding.UTF8, "application/json");
             var response1 = Client.PutAsync("api/customers", content).Result;
 
-            if (response1.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
 
-            return View();
+        }
+
+        public async Task<IActionResult> BlockBillPay(int? id)
+        {
+            // get billpay details
+            var response = await Client.GetAsync($"api/billpays/{id}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            var result = await response.Content.ReadAsStringAsync();
+            var billpay = JsonConvert.DeserializeObject<BillPay>(result);
+
+            return View(billpay);
+        }
+
+        [HttpPost]
+        [ActionName("Block")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BlockBillPay(int BillPayID)
+        {
+            // get customer details
+            var response = await Client.GetAsync($"api/billpays/{BillPayID}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            var result = await response.Content.ReadAsStringAsync();
+            var billpay = JsonConvert.DeserializeObject<BillPay>(result);
+
+            // block billpay
+            billpay.Status = Status.Blocked;
+
+            // update database through api
+            var content = new StringContent(JsonConvert.SerializeObject(billpay), Encoding.UTF8, "application/json");
+            var response1 = Client.PutAsync("api/billpays", content).Result;
+
+            return RedirectToAction(nameof(BillPays));
+        }
+
+        [HttpPost]
+        [ActionName("Unblock")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnBlockBillPay(int BillPayID)
+        {
+            // get customer details
+            var response = await Client.GetAsync($"api/billpays/{BillPayID}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            var result = await response.Content.ReadAsStringAsync();
+            var billpay = JsonConvert.DeserializeObject<BillPay>(result);
+
+            // block billpay
+            billpay.Status = Status.Pending;
+
+            // update database through api
+            var content = new StringContent(JsonConvert.SerializeObject(billpay), Encoding.UTF8, "application/json");
+            var response1 = Client.PutAsync("api/billpays", content).Result;
+
+            return RedirectToAction(nameof(BillPays));
         }
     }
 }

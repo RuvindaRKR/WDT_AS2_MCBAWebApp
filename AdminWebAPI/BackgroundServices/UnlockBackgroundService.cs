@@ -43,7 +43,6 @@ namespace AdminWebAPI.BackgroundServices
             {
                 if (customer.AccountStatus == AccountStatus.Locked)
                 {
-                    _logger.LogInformation($"here : {customer.CustomerID}");
                     customer.AccountStatus = AccountStatus.UnLocked;
                 }
             }

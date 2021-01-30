@@ -1,0 +1,72 @@
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@using AdminWebApp.Utilities
+@model BillPay
+
+@{
+    ViewData["Title"] = "Block";
+}
+
+<h1>BillPay Block</h1>
+
+<h3>Are you sure you want to block this billpay?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BillPayID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BillPayID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AccountNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AccountNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PayeeID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PayeeID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ScheduleDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ScheduleDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Period)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Period)
+        </dd>
+    </dl>
+
+    @if (Model.Status == Status.Pending)
+    {
+        <form asp-action="Block">
+            <input type="hidden" asp-for="BillPayID" />
+            <input type="submit" value="Block" class="btn btn-danger" />
+            <a asp-action="BillPays">Back to BillPays</a>
+        </form>
+    }
+    @if (Model.Status == Status.Blocked)
+    {
+        <form asp-action="Unblock">
+            <input type="hidden" asp-for="BillPayID" />
+            <input type="submit" value="Unblock" class="btn btn-danger" />
+            <a asp-action="BillPays">Back to BillPays</a>
+        </form>
+        
+    }
+</div>
