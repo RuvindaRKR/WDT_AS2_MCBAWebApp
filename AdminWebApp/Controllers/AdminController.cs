@@ -47,27 +47,31 @@ namespace AdminWebApp.Controllers
             ViewBag.Customer = customer;
 
             // make request to api for accounts of the specified customer
-            var response2 = await Client.GetAsync($"api/accounts/customer/{id}");
-            if (!response.IsSuccessStatusCode)
+            var response2 = await Client.GetAsync($"api/accounts");
+            if (!response2.IsSuccessStatusCode)
                 throw new Exception();
             var result2 = await response2.Content.ReadAsStringAsync();
             var accounts = JsonConvert.DeserializeObject<List<Account>>(result2);
-            // put accounts in ViewBag
-            ViewBag.Accounts = accounts;
 
             // for each account, take each transaction and add it to the transactions list
             List<Transaction> transactions = new();
+
             foreach (var account in accounts)
             {
-                var response3 = await Client.GetAsync($"api/transactions/account/{id}");
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception();
-                var result3 = await response3.Content.ReadAsStringAsync();
-                var transactionsForAccount = JsonConvert.DeserializeObject<List<Transaction>>(result3);
-                foreach (var entry in transactionsForAccount)
+                if(account.CustomerID == id)
                 {
-                    transactions.Add(entry);
+                    var response3 = await Client.GetAsync($"api/transactions");
+                    if (!response3.IsSuccessStatusCode)
+                        throw new Exception();
+                    var result3 = await response3.Content.ReadAsStringAsync();
+                    var transactionsForAccount = JsonConvert.DeserializeObject<List<Transaction>>(result3);
+                    foreach (var entry in transactionsForAccount)
+                    {
+                        if(entry.AccountNumber == account.AccountNumber)
+                            transactions.Add(entry);
+                    }
                 }
+                
             }
             // sort the transactions list so that they are ordered by transaction time
             List<Transaction> sortedTransactions = transactions.OrderBy(t => t.TransactionTimeUtc).ToList();
