@@ -15,14 +15,14 @@
     <form asp-action="Transactions" asp-controller="Admin" method="get">
         Start Date : <input type="datetime-local" name="d1" />
         End Date : <input type="datetime-local" name="d2" />
-        Search ID : <input type="text" name="SearchString" />
-        Search Customer : <select name="customerid">
+        Search ID : <input type="text" name="SearchString" /><br /><br />
+        <select name="customerid">
             <option value="">Select A Customer</option>
             @foreach (var customer in ViewBag.Customers)
             {
                 <option value="@customer.CustomerID">@customer.CustomerID - @customer.CustomerName</option>
             }
-        </select>
+        </select><br /><br />
         <input type="submit" value="Filter" class="btn btn-success" />
         <a asp-action="Transactions" class="btn btn-success">Get All Records</a>
         <div>
