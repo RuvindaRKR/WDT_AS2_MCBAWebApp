@@ -31,6 +31,9 @@ namespace WDT_AS2.Models
         [StringLength(15)]
         public string Phone { get; set; }
 
+        //[StringLength(15)]
+        //public string Email { get; set; }
+
         public AccountStatus AccountStatus { get; set; }
 
         public virtual List<Account> Accounts { get; set; }

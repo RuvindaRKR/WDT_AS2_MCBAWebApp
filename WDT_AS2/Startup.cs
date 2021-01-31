@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SharedUtils.Email;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,9 +39,10 @@ namespace WDT_AS2
                 // Make the session cookie essential.
                 options.Cookie.IsEssential = true;
             });
-
+            services.AddEmailSender(Configuration);
             //Run background service
             services.AddHostedService<BillPayBackgroundService>();
+            services.AddHostedService<EmailBackgroundService>();
 
             services.AddControllersWithViews();
         }

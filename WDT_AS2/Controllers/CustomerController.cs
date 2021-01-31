@@ -12,6 +12,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
 using WDT_AS2.Models;
+using MimeKit;
+using MailKit.Net.Smtp;
+using SharedUtils;
+using System.IO;
 
 namespace WDT_AS2.Controllers
 {
@@ -19,13 +23,21 @@ namespace WDT_AS2.Controllers
     public class CustomerController : Controller
     {
         private readonly McbaContext _context;
-
+        //private readonly IEmailSender _emailSender;
         // ReSharper disable once PossibleInvalidOperationException
         private int CustomerID => HttpContext.Session.GetInt32(nameof(Customer.CustomerID)).Value;
 
-        public CustomerController(McbaContext context) => _context = context;
+        public CustomerController(McbaContext context) 
+        {
+            _context = context;
+            //_emailSender = emailSender;
+        }
 
-        public async Task<IActionResult> Index() => View(await _context.Customers.FindAsync(CustomerID));
+        //public async Task<IActionResult> Index() => View(await _context.Customers.FindAsync(CustomerID));
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Customers.FindAsync(CustomerID));
+        }
 
         public async Task<IActionResult> Deposit(int id) => View(await _context.Accounts.FindAsync(id));
 
@@ -54,6 +66,10 @@ namespace WDT_AS2.Controllers
                     Amount = amount,
                     TransactionTimeUtc = DateTime.Now
                 });
+
+            
+
+            
 
             await _context.SaveChangesAsync();
 

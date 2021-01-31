@@ -1,0 +1,38 @@
+﻿<html>
+<body>
+    <h3>Your Account Statement</h3>
+    <h1>@Model.Name</h1>
+    <h3>Balance : $@Model.Balance</h3>
+    <h3>
+        Amount Changed : $
+        @if (@Model.Amount > 0)
+        {
+            @Model.Amount <a>Increased</a>
+        }
+        @if (@Model.Amount < 0)
+        {
+            @Model.Amount <a>Decreased</a>
+        }
+    </h3>
+    <table class="table">
+        <tr>
+            <th>TransactionID</th>
+            <th>TransactionType</th>
+            <th>DestinationAccountNumber</th>
+            <th>Amount</th>
+            <th>Comment</th>
+            <th></th>
+        </tr>
+        @foreach (var transaction in Model.Data)
+        {
+            <tr>
+                <td>@transaction.TransactionID</td>
+                <td>@transaction.TransactionType</td>
+                <td>@transaction.DestinationAccountNumber</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.Comment</td>
+            </tr>
+        }
+    </table>
+</body>
+</html>
