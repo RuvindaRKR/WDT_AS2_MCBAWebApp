@@ -1,6 +1,7 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Mvc.Core.Common
+@using MCBAWebApplication.Utilities
 @model IPagedList<Customer>
 @{
     ViewData["Title"] = "Customers";
@@ -28,23 +29,28 @@
             </tr>
             @foreach (var customer in Model)
             {
-                <tr>
-                    <td>@Html.DisplayFor(x => customer.CustomerID)</td>
-                    <td>@Html.DisplayFor(x => customer.CustomerName)</td>
-                    <td>@Html.DisplayFor(x => customer.TFN)</td>
-                    <td>@Html.DisplayFor(x => customer.Address)</td>
-                    <td>@Html.DisplayFor(x => customer.City)</td>
-                    <td>@Html.DisplayFor(x => customer.State)</td>
-                    <td>@Html.DisplayFor(x => customer.PostCode)</td>
-                    <td>@Html.DisplayFor(x => customer.Phone)</td>
-                    <td>@Html.DisplayFor(x => customer.AccountStatus)</td>
-                    <td>
-                        <a class="btn btn-primary"
-                           asp-action="Transactions" asp-route-customerid="@customer.CustomerID">View Transactions</a>
-                        <a class="btn btn-primary"
-                           asp-action="LockUser" asp-route-id="@customer.CustomerID">Lock</a>
-                    </td>
-                </tr>
+        <tr>
+            <td>@Html.DisplayFor(x => customer.CustomerID)</td>
+            <td>@Html.DisplayFor(x => customer.CustomerName)</td>
+            <td>@Html.DisplayFor(x => customer.TFN)</td>
+            <td>@Html.DisplayFor(x => customer.Address)</td>
+            <td>@Html.DisplayFor(x => customer.City)</td>
+            <td>@Html.DisplayFor(x => customer.State)</td>
+            <td>@Html.DisplayFor(x => customer.PostCode)</td>
+            <td>@Html.DisplayFor(x => customer.Phone)</td>
+            <td>@Html.DisplayFor(x => customer.AccountStatus)</td>
+            <td>
+                <a class="btn btn-primary"
+                   asp-action="Transactions" asp-route-customerid="@customer.CustomerID">View Transactions</a>
+            </td>
+            <td>
+                @if (customer.AccountStatus == AccountStatus.UnLocked)
+                {
+                    <a class="btn btn-primary"
+                       asp-action="LockUser" asp-route-id="@customer.CustomerID">Lock Account</a>
+                }
+            </td>
+        </tr>
             }
         </table>
 

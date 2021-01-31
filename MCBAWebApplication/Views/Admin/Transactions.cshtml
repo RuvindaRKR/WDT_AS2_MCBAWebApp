@@ -1,0 +1,61 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@model IPagedList<Transaction>
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<div>
+    <h1 class="display-4">Transactions</h1>
+    <br />
+    <br />
+    <h3>Transactions</h3>
+    <br />
+    <form asp-action="Transactions" asp-controller="Admin" method="get">
+        Start Date : <input type="datetime-local" name="d1" />
+        End Date : <input type="datetime-local" name="d2" />
+        Search ID : <input type="text" name="SearchString" /><br /><br />
+        <select name="customerid">
+            <option value="">Select A Customer</option>
+            @foreach (var customer in ViewBag.Customers)
+            {
+                <option value="@customer.CustomerID">@customer.CustomerID - @customer.CustomerName</option>
+            }
+        </select><br /><br />
+        <input type="submit" value="Filter" class="btn btn-success" />
+        <a asp-action="Transactions" class="btn btn-success">Get All Records</a>
+        <div>
+            <table class="table">
+                <tr>
+                    <th>@Html.DisplayNameFor(x => Model[0].TransactionID)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].AccountNumber)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].TransactionType)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].DestinationAccountNumber)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Amount)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].Comment)</th>
+                    <th>@Html.DisplayNameFor(x => Model[0].TransactionTimeUtc)</th>
+                </tr>
+                @foreach (var transaction in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(x => transaction.TransactionID)</td>
+                        <td>@Html.DisplayFor(x => transaction.AccountNumber)</td>
+                        <td>@Html.DisplayFor(x => transaction.TransactionType)</td>
+                        <td>@Html.DisplayFor(x => transaction.DestinationAccountNumber)</td>
+                        <td>@Html.DisplayFor(x => transaction.Amount)</td>
+                        <td>@Html.DisplayFor(x => transaction.Comment)</td>
+                        <td>@Html.DisplayFor(x => transaction.TransactionTimeUtc)</td>
+                    </tr>
+                }
+            </table>
+
+            @Html.PagedListPager(Model, page => Url.Action("Transactions", new { page, customerid = ViewBag.ID, d1 = ViewBag.D1, d2 = ViewBag.D2, SearchString = ViewBag.SearchString }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" }
+                })
+        </div>
+    </form>
+</div>
