@@ -1,0 +1,64 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@using MCBAWebApplication.ViewModels
+@using MCBAWebApplication.Utilities
+@model IPagedList<ScheduledPaymentsViewModel>
+@{
+    ViewData["Title"] = "Scheduled Payments";
+    var customer = (Customer)ViewBag.Customer;
+}
+
+<div>
+    <h1 class="display-4"> Scheduled Payments for @customer.CustomerName</h1>
+    <br />
+    <br />
+    <h3>Your Transactions</h3>
+    <div>
+        <div>
+            Filter by: <a asp-action="ScheduledPayments" asp-route-filter="@Status.Pending">Pending</a>
+            <a asp-action="ScheduledPayments" asp-route-filter="@Status.Complete">Complete</a>
+            <a asp-action="ScheduledPayments" asp-route-filter="@Status.Failed">Failed</a>
+            @if (ViewBag.TableFilter != null)
+            {
+                <a asp-action="ScheduledPayments" asp-route-filter="@null">Clear Filters</a>
+            }
+        </div>
+        <table class="table">
+            <tr>
+                <th>@Html.DisplayNameFor(x => Model[0].BillPayID):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].PayeeName):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Amount):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].ScheduleDate):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Period):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Status):</th>
+                <th></th>
+            </tr>
+            @foreach (var billpay in Model)
+            {
+        <tr>
+            <td>@Html.DisplayFor(x => billpay.BillPayID)</td>
+            <td>@Html.DisplayFor(x => billpay.PayeeName)</td>
+            <td>@Html.DisplayFor(x => billpay.Amount)</td>
+            <td>@Html.DisplayFor(x => billpay.ScheduleDate)</td>
+            <td>@Html.DisplayFor(x => billpay.Period)</td>
+            <td>@Html.DisplayFor(x => billpay.Status)</td>
+            <td>
+                @if (billpay.Status == Status.Pending)
+                {
+                    <a class="btn btn-primary" asp-action="ModifyBillPay" asp-route-id="@billpay.BillPayID" >Modify</a>
+                    <a class="btn btn-primary" asp-action="DeleteBillPay" asp-route-id="@billpay.BillPayID" OnClientClick="return confirm('Do you really wanna do this?')">Delete</a>
+                }
+            </td>
+        </tr>
+            }
+        </table>
+
+        @Html.PagedListPager(Model, page => Url.Action("ScheduledPayments", new { page }),
+            new PagedListRenderOptions
+            {
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" }
+            })
+    </div>
+</div>
