@@ -10,38 +10,38 @@ using X.PagedList;
 using MCBAWebApplication.Utilities;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
-namespace AdminWebApp.Controllers
+namespace MCBAWebApplication.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly RoleManager<IdentityRole> roleManager;
         private HttpClient Client => _clientFactory.CreateClient("api");
 
-        public AdminController(IHttpClientFactory clientFactory, RoleManager<IdentityRole> roleManager)
+        public AdminController(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
-            this.roleManager = roleManager;
         }
 
-        //public async Task<IActionResult> Index(int? page = 1)
-        //{
-        //    // make request to api
-        //    var response = await Client.GetAsync("api/customers");
-        //    if (!response.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    // Storing the response details received from web api.
-        //    var result = await response.Content.ReadAsStringAsync();
+        public async Task<IActionResult> Index(int? page = 1)
+        {
+            // make request to api
+            var response = await Client.GetAsync("api/customers");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception();
+            // Storing the response details received from web api.
+            var result = await response.Content.ReadAsStringAsync();
 
-        //    // Deserializing the response received from web api and storing into a list.
-        //    var customers = JsonConvert.DeserializeObject<List<Customer>>(result);
+            // Deserializing the response received from web api and storing into a list.
+            var customers = JsonConvert.DeserializeObject<List<Customer>>(result);
 
-        //    int pageSize = 4;
-        //    var customerListPaged = await customers.ToPagedListAsync((int)page, pageSize);
+            int pageSize = 4;
+            var customerListPaged = await customers.ToPagedListAsync((int)page, pageSize);
 
-        //    return View(customerListPaged);
-        //}
+            return View(customerListPaged);
+        }
 
         //public async Task<IActionResult> Transactions(int? customerid, int? page = 1, DateTime? d1 = null, DateTime? d2 = null, string? SearchString = null)
         //{
@@ -228,7 +228,7 @@ namespace AdminWebApp.Controllers
 
         //    return View(billpaysListPaged);
         //}
-        
+
         //public async Task<IActionResult> LockUser(int? id)
         //{
         //    // get customer details

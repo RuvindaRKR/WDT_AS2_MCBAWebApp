@@ -1,0 +1,58 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Core.Common
+@model IPagedList<Customer>
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div>
+    <h1 class="display-4">Welcome back, Admin</h1>
+    <br />
+    <br />
+    <h3>MCBA Customers</h3>
+    <br />
+    <div>
+        <table class="table">
+            <tr>
+                <th>@Html.DisplayNameFor(x => Model[0].CustomerID):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].CustomerName):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].TFN):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Address):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].City):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].State):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].PostCode):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].Phone):</th>
+                <th>@Html.DisplayNameFor(x => Model[0].AccountStatus):</th>
+                <th></th>
+            </tr>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(x => customer.CustomerID)</td>
+                    <td>@Html.DisplayFor(x => customer.CustomerName)</td>
+                    <td>@Html.DisplayFor(x => customer.TFN)</td>
+                    <td>@Html.DisplayFor(x => customer.Address)</td>
+                    <td>@Html.DisplayFor(x => customer.City)</td>
+                    <td>@Html.DisplayFor(x => customer.State)</td>
+                    <td>@Html.DisplayFor(x => customer.PostCode)</td>
+                    <td>@Html.DisplayFor(x => customer.Phone)</td>
+                    <td>@Html.DisplayFor(x => customer.AccountStatus)</td>
+                    <td>
+                        <a class="btn btn-primary"
+                           asp-action="Transactions" asp-route-customerid="@customer.CustomerID">View Transactions</a>
+                        <a class="btn btn-primary"
+                           asp-action="LockUser" asp-route-id="@customer.CustomerID">Lock</a>
+                    </td>
+                </tr>
+            }
+        </table>
+
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+            new PagedListRenderOptions
+            {
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" }
+            })
+    </div>
+</div>
