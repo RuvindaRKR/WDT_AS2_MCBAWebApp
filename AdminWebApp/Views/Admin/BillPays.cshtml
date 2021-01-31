@@ -11,19 +11,17 @@
     <h1 class="display-4">BillPays</h1>
     <br />
     <br />
-    <h3>Billpays</h3>
-    <br />
     <form asp-action="Billpays" asp-controller="Admin" method="get">
         Start Date : <input type="datetime-local" name="d1" />
         End Date : <input type="datetime-local" name="d2" />
-        Search ID : <input type="text" name="SearchString" />
-        Search Customer : <select name="customerid">
+        Search ID : <input type="text" name="SearchString" /><br /><br />
+        <select name="customerid">
             <option value="">Select A Customer</option>
             @foreach (var customer in ViewBag.Customers)
             {
                 <option value="@customer.CustomerID">@customer.CustomerID - @customer.CustomerName</option>
             }
-        </select>
+        </select><br /><br />
         <input type="submit" value="Filter" class="btn btn-success" />
         <a asp-action="Billpays" class="btn btn-success">Get All Records</a>
         <div>
@@ -53,12 +51,12 @@
                         <td>
                             @if (billpay.Status == Status.Pending)
                             {
-                                <a class="btn btn-primary">Block</a>
+                                <a asp-action="BlockBillPay" asp-route-id="@billpay.BillPayID" class="btn btn-primary">Block</a>
                             }
-                            @*@if (billpay.Status == Status.Blocked)
+                            @if (billpay.Status == Status.Blocked)
                             {
-                                <a class="btn btn-primary">Unblock</a>
-                            }*@
+                                <a asp-action="BlockBillPay" asp-route-id="@billpay.BillPayID" class="btn btn-primary">Unblock</a>
+                            }
                         </td>
                     </tr>
                 }
