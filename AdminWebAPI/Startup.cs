@@ -33,6 +33,7 @@ namespace AdminWebAPI
             services.AddScoped<AccountManager>();
             services.AddScoped<TransactionManager>();
             services.AddScoped<BillPayManager>();
+            services.AddScoped<PayeeManager>();
 
             //Run background service
             services.AddHostedService<UnlockBackgroundService>();
