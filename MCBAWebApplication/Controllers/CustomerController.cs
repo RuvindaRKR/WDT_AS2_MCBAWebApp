@@ -476,215 +476,216 @@ namespace MCBAWebApplication.Controllers
             return View(transactionListPaged);
         }
 
-        //public async Task<IActionResult> BillPay()
-        //{
-        //    //  find current user's CustomerID
-        //    var name = User.Identity.Name;
-        //    var applicationUser = await _userManager.FindByNameAsync(name);
-        //    var customerid = applicationUser.CustomerID;
+        public async Task<IActionResult> BillPay()
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
 
-        //    //  retrieve payees
-        //    var payeesResponse = await Client.GetAsync($"api/payees");
-        //    if (!payeesResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var payeesResult = await payeesResponse.Content.ReadAsStringAsync();
-        //    var payees = JsonConvert.DeserializeObject<List<Payee>>(payeesResult);
+            //  retrieve payees
+            var payeesResponse = await Client.GetAsync($"api/payees");
+            if (!payeesResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var payeesResult = await payeesResponse.Content.ReadAsStringAsync();
+            var payees = JsonConvert.DeserializeObject<List<Payee>>(payeesResult);
 
-        //    //  copy account ids of accounts other than the users' to a list 
-        //    var payeeList = new List<int>();
-        //    foreach (var item in payees.ToList())
-        //    {
-        //        payeeList.Add(item.PayeeID);
-        //    }
-        //    ViewBag.PayeeList = new SelectList(payeeList, "PayeeID");
+            //  copy account ids of accounts other than the users' to a list 
+            var payeeList = new List<int>();
+            foreach (var item in payees.ToList())
+            {
+                payeeList.Add(item.PayeeID);
+            }
+            ViewBag.PayeeList = new SelectList(payeeList, "PayeeID");
 
-        //    //  retrieve accounts
-        //    var accountsResponse = await Client.GetAsync($"api/accounts");
-        //    if (!accountsResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
-        //    var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+            //  retrieve accounts
+            var accountsResponse = await Client.GetAsync($"api/accounts");
+            if (!accountsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
 
-        //    //  add users accounts' account numbers to list 
-        //    var accList = new List<int>();
-        //    foreach (var account in accounts.ToList())
-        //    {
-        //        if (account.CustomerID == customerid)
-        //        {
-        //            accList.Add(account.AccountNumber);
-        //        }
-        //    }
-        //    ViewBag.AccList = new SelectList(accList, "AccountNumber");
-            
-        //    return View();
-        //}
+            //  add users accounts' account numbers to list 
+            var accList = new List<int>();
+            foreach (var account in accounts.ToList())
+            {
+                if (account.CustomerID == customerid)
+                {
+                    accList.Add(account.AccountNumber);
+                }
+            }
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> BillPay(int MyAccountNumber, int PayeeAccountNumber, decimal amount, DateTime PickedDate, Period Period)
-        //{
-        //    //  retrieve customers account
-        //    var accountResponse = await Client.GetAsync($"api/accounts/{MyAccountNumber}");
-        //    if (!accountResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var accountResult = await accountResponse.Content.ReadAsStringAsync();
-        //    var account = JsonConvert.DeserializeObject<Account>(accountResult);
+            return View();
+        }
 
-        //    //  retrieve payees account
-        //    var payeeResponse = await Client.GetAsync($"api/payees/{PayeeAccountNumber}");
-        //    if (!payeeResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var payeeResult = await payeeResponse.Content.ReadAsStringAsync();
-        //    var payee = JsonConvert.DeserializeObject<Payee>(payeeResult);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BillPay(int MyAccountNumber, int PayeeAccountNumber, decimal amount, DateTime PickedDate, Period Period)
+        {
+            //  retrieve customers account
+            var accountResponse = await Client.GetAsync($"api/accounts/{MyAccountNumber}");
+            if (!accountResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountResult = await accountResponse.Content.ReadAsStringAsync();
+            var account = JsonConvert.DeserializeObject<Account>(accountResult);
 
-        //    int chAmount = 0;
+            //  retrieve payees account
+            var payeeResponse = await Client.GetAsync($"api/payees/{PayeeAccountNumber}");
+            if (!payeeResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var payeeResult = await payeeResponse.Content.ReadAsStringAsync();
+            var payee = JsonConvert.DeserializeObject<Payee>(payeeResult);
 
-        //    if (account.AccountType == AccountType.Checking)
-        //        chAmount = 200;
-        //    if (amount <= 0)
-        //        ModelState.AddModelError(nameof(amount), "Amount must be positive.");
-        //    if (amount.HasMoreThanTwoDecimalPlaces())
-        //        ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
-        //    if (amount > (account.Balance + chAmount))
-        //        ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
-        //    if (!ModelState.IsValid)
-        //    {
-        //        ViewBag.Amount = amount;
-        //        return View(account);
-        //    }
+            int chAmount = 0;
 
-        //    //  add billpay to database
-        //    BillPay billpay =
-        //    new BillPay
-        //    {
-        //        AccountNumber = account.AccountNumber,
-        //        PayeeID = PayeeAccountNumber,
-        //        Amount = amount,
-        //        Status = Status.Pending,
-        //        ScheduleDate = PickedDate,
-        //        Period = Period,
-        //        ModifyDate = DateTime.Now
-        //    };
+            if (account.AccountType == AccountType.Checking)
+                chAmount = 200;
+            if (amount <= 0)
+                ModelState.AddModelError(nameof(amount), "Amount must be positive.");
+            if (amount.HasMoreThanTwoDecimalPlaces())
+                ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
+            if (amount > (account.Balance + chAmount))
+                ModelState.AddModelError(nameof(amount), "Insufficeint Funds.");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Amount = amount;
+                return View(account);
+            }
 
-        //    var content = new StringContent(JsonConvert.SerializeObject(billpay), Encoding.UTF8, "application/json");
-        //    var response = Client.PostAsync("api/billpays", content).Result;
+            //  add billpay to database
+            BillPay billpay =
+            new BillPay
+            {
+                AccountNumber = account.AccountNumber,
+                PayeeID = PayeeAccountNumber,
+                Amount = amount,
+                Status = Status.Pending,
+                ScheduleDate = PickedDate,
+                Period = Period,
+                ModifyDate = DateTime.Now
+            };
 
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
+            var content = new StringContent(JsonConvert.SerializeObject(billpay), Encoding.UTF8, "application/json");
+            var response = Client.PostAsync("api/billpays", content).Result;
 
-        //    return View(account);
-        //}
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-        //public async Task<IActionResult> ScheduledPayments(int? page = 1, Status? filter = null)
-        //{
-        //    //  find current user's CustomerID
-        //    var name = User.Identity.Name;
-        //    var applicationUser = await _userManager.FindByNameAsync(name);
-        //    var customerid = applicationUser.CustomerID;
+            return View(account);
+        }
 
-        //    //  retrieve customer object
-        //    var customerResponse = await Client.GetAsync($"api/customers/{customerid}");
-        //    if (!customerResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var customerResult = await customerResponse.Content.ReadAsStringAsync();
-        //    var customer = JsonConvert.DeserializeObject<Customer>(customerResult);
-        //    ViewBag.Customer = customer;
+        public async Task<IActionResult> ScheduledPayments(int? page = 1, Status? filter = null)
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
 
-        //    //  retrieve accounts
-        //    var accountsResponse = await Client.GetAsync($"api/accounts");
-        //    if (!accountsResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
-        //    var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+            //  retrieve customer object
+            var customerResponse = await Client.GetAsync($"api/customers/{customerid}");
+            if (!customerResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var customerResult = await customerResponse.Content.ReadAsStringAsync();
+            var customer = JsonConvert.DeserializeObject<Customer>(customerResult);
+            ViewBag.Customer = customer;
 
-        //    //  add users accounts' account numbers to list 
-        //    var accList = new List<int>();
-        //    foreach (var account in accounts.ToList())
-        //    {
-        //        if (account.CustomerID == customerid)
-        //        {
-        //            accList.Add(account.AccountNumber);
-        //        }
-        //    }
+            //  retrieve accounts
+            var accountsResponse = await Client.GetAsync($"api/accounts");
+            if (!accountsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
 
-        //    //  retrieve billpays
-        //    var billpaysResponse = await Client.GetAsync($"api/accounts");
-        //    if (!billpaysResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var billpaysResult = await billpaysResponse.Content.ReadAsStringAsync();
-        //    var billpays = JsonConvert.DeserializeObject<List<BillPay>>(billpaysResult);
+            //  add users accounts' account numbers to list 
+            var accList = new List<int>();
+            foreach (var account in accounts.ToList())
+            {
+                if (account.CustomerID == customerid)
+                {
+                    accList.Add(account.AccountNumber);
+                }
+            }
 
-        //    //  retrieve payees
-        //    var payeesResponse = await Client.GetAsync($"api/payees");
-        //    if (!payeesResponse.IsSuccessStatusCode)
-        //        throw new Exception();
-        //    var payeesResult = await payeesResponse.Content.ReadAsStringAsync();
-        //    var payees = JsonConvert.DeserializeObject<List<Payee>>(payeesResult);
+            //  retrieve billpays
+            var billpaysResponse = await Client.GetAsync($"api/billpays");
+            if (!billpaysResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var billpaysResult = await billpaysResponse.Content.ReadAsStringAsync();
+            var billpays = JsonConvert.DeserializeObject<List<BillPay>>(billpaysResult);
 
-        //    var scheduledPayments = new List<ScheduledPaymentsViewModel>();
-        //    foreach (var b in billpays)
-        //    {
-        //        foreach (var p in payees)
-        //        {
-        //            if (accList.Exists(x => x == b.AccountNumber) && b.PayeeID == p.PayeeID)
-        //            {
-        //                scheduledPayments.Add(
-        //                    new ScheduledPaymentsViewModel
-        //                    {
-        //                        BillPayID = b.BillPayID,
-        //                        PayeeName = p.PayeeName,
-        //                        Amount = b.Amount,
-        //                        Status = b.Status,
-        //                        ScheduleDate = b.ScheduleDate,
-        //                        Period = b.Period
-        //                    });
-        //            }
-        //        }
-        //    }
+            //  retrieve payees
+            var payeesResponse = await Client.GetAsync($"api/payees");
+            if (!payeesResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var payeesResult = await payeesResponse.Content.ReadAsStringAsync();
+            var payees = JsonConvert.DeserializeObject<List<Payee>>(payeesResult);
 
-        //    switch (filter)
-        //    {
-        //        case Status.Pending:
-        //            foreach (var scheduledPayment in scheduledPayments.ToList())
-        //            {
-        //                if (scheduledPayment.Status != Status.Pending)
-        //                {
-        //                    scheduledPayments.Remove(scheduledPayment);
-        //                }
-        //            }
-        //            ViewBag.TableFilter = Status.Pending;
-        //            break;
-        //        case Status.Complete:
-        //            foreach (var scheduledPayment in scheduledPayments.ToList())
-        //            {
-        //                if (scheduledPayment.Status != Status.Complete)
-        //                {
-        //                    scheduledPayments.Remove(scheduledPayment);
-        //                }
-        //            }
-        //            ViewBag.TableFilter = Status.Complete;
-        //            break;
-        //        case Status.Failed:
-        //            foreach (var scheduledPayment in scheduledPayments.ToList())
-        //            {
-        //                if (scheduledPayment.Status != Status.Failed)
-        //                {
-        //                    scheduledPayments.Remove(scheduledPayment);
-        //                }
-        //            }
-        //            ViewBag.TableFilter = Status.Failed;
-        //            break;
-        //        default:
-        //            break;
-        //    }
+            var scheduledPayments = new List<ScheduledPaymentsViewModel>();
+            foreach (var b in billpays)
+            {
+                foreach (var p in payees)
+                {
+                    if (accList.Exists(x => x == b.AccountNumber) && b.PayeeID == p.PayeeID)
+                    {
+                        scheduledPayments.Add(
+                            new ScheduledPaymentsViewModel
+                            {
+                                BillPayID = b.BillPayID,
+                                PayeeName = p.PayeeName,
+                                Amount = b.Amount,
+                                Status = b.Status,
+                                ScheduleDate = b.ScheduleDate,
+                                Period = b.Period
+                            });
+                    }
+                }
+            }
 
-        //    int pageSize = 4;
-        //    var billPayListPaged = await scheduledPayments.ToPagedListAsync((int)page, pageSize);
+            switch (filter)
+            {
+                case Status.Pending:
+                    foreach (var scheduledPayment in scheduledPayments.ToList())
+                    {
+                        if (scheduledPayment.Status != Status.Pending)
+                        {
+                            scheduledPayments.Remove(scheduledPayment);
+                        }
+                    }
+                    ViewBag.TableFilter = Status.Pending;
+                    break;
+                case Status.Complete:
+                    foreach (var scheduledPayment in scheduledPayments.ToList())
+                    {
+                        if (scheduledPayment.Status != Status.Complete)
+                        {
+                            scheduledPayments.Remove(scheduledPayment);
+                        }
+                    }
+                    ViewBag.TableFilter = Status.Complete;
+                    break;
+                case Status.Failed:
+                    foreach (var scheduledPayment in scheduledPayments.ToList())
+                    {
+                        if (scheduledPayment.Status != Status.Failed)
+                        {
+                            scheduledPayments.Remove(scheduledPayment);
+                        }
+                    }
+                    ViewBag.TableFilter = Status.Failed;
+                    break;
+                default:
+                    break;
+            }
 
-        //    return View(billPayListPaged);
-        //}
+            List<ScheduledPaymentsViewModel> sortedScheduledPayments = scheduledPayments.OrderByDescending(p => p.ScheduleDate).ToList();
+            int pageSize = 4;
+            var billPayListPaged = await sortedScheduledPayments.ToPagedListAsync((int)page, pageSize);
+
+            return View(billPayListPaged);
+        }
 
         //public async Task<IActionResult> ModifyBillPay(int id) => View(await _context.BillPays.FindAsync(id));
 
