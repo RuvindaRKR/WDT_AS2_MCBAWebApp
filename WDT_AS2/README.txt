@@ -8,4 +8,6 @@ References
 https://www.w3schools.com/bootstrap4/bootstrap_forms_inputs.asp
 https://stackoverflow.com/questions/9054609/how-to-select-a-single-column-with-entity-framework
 https://www.learnrazorpages.com/razor-pages/forms/select-lists
+https://khalidabuhakmeh.com/generate-outputs-with-razor-engine-in-dotnet-core
+https://stackoverflow.com/questions/38762368/embedded-resource-in-net-core-libraries
 And the codes provided in lectures and tutorials.

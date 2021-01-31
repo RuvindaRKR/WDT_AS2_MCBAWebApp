@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WDT_AS2.Models
+namespace SharedUtils.Email
 {
-    public class SmtpSettings
+    internal class SmtpSettings
     {
         public string Server { get; set; }
         public int Port { get; set; }
