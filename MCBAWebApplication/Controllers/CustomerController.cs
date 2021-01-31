@@ -476,14 +476,48 @@ namespace MCBAWebApplication.Controllers
             return View(transactionListPaged);
         }
 
-        //public async Task<IActionResult> BillPay()
-        //{
-        //    var payeeList = await _context.Payees.Select(x => x.PayeeID).ToListAsync();
-        //    ViewBag.PayeeList = new SelectList(payeeList, "AccountNumber");
-        //    var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
-        //    ViewBag.AccList = new SelectList(accList, "AccountNumber");
-        //    return View();
-        //}
+        public async Task<IActionResult> BillPay()
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
+
+            //  retrieve payees
+            var payeesResponse = await Client.GetAsync($"api/accounts");
+            if (!payeesResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var payeesResult = await payeesResponse.Content.ReadAsStringAsync();
+            var payees = JsonConvert.DeserializeObject<List<Payee>>(payeesResult);
+
+            //  copy account ids of accounts other than the users' to a list 
+            var payeeList = new List<int>();
+            foreach (var item in payees.ToList())
+            {
+                payeeList.Add(item.PayeeID);
+            }
+            ViewBag.PayeeList = new SelectList(payeeList, "AccountNumber");
+
+            //  retrieve accounts
+            var accountsResponse = await Client.GetAsync($"api/accounts");
+            if (!accountsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+
+            //  add users accounts' account numbers to list 
+            var accList = new List<int>();
+            foreach (var account in accounts.ToList())
+            {
+                if (account.CustomerID == customerid)
+                {
+                    accList.Add(account.AccountNumber);
+                }
+            }
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
+            
+            return View();
+        }
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
