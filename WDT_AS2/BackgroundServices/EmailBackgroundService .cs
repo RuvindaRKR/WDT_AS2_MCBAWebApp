@@ -94,7 +94,7 @@ namespace WDT_AS2.BackgroundServices
                         {
                             new EmailRecipient
                             {
-                                Email = "S3804158@student.rmit.edu.au",
+                                Email = "s3724928@student.rmit.edu.au",
                                 Name = "Transactions Statement MCBA"
                             }
                         }, body, "MCBA");
