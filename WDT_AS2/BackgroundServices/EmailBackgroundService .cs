@@ -28,6 +28,7 @@ namespace WDT_AS2.BackgroundServices
         {
             _services = services;
             _logger = logger;
+            //set the start time as now
             _lastRunTime = DateTime.Now;
         }
 
@@ -63,6 +64,7 @@ namespace WDT_AS2.BackgroundServices
                     {
                         if (DateTime.Compare(_lastRunTime, transaction.TransactionTimeUtc) < 0)
                         {
+                            // Take Deposit and Transfers to ad positives and Withdraws, transfers from, service as negatives
                             if(transaction.TransactionType == TransactionType.Deposit || (transaction.TransactionType == TransactionType.Transfer && transaction.DestinationAccountNumber ==null))
                                 changedBalance += transaction.Amount;
                             if(transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.BillPay || transaction.TransactionType == TransactionType.ServiceCharge || transaction.TransactionType == TransactionType.Transfer)

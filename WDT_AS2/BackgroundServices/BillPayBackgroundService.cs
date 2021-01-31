@@ -39,6 +39,7 @@ namespace WDT_AS2.BackgroundServices
 
             var billPays = await context.BillPays.ToListAsync(cancellationToken);
 
+            //check for the billpay scheduled dates and perform transaction if date is passed
             foreach(var BillPay in billPays)
             {
                 if (BillPay.Status == Status.Pending)
@@ -56,6 +57,8 @@ namespace WDT_AS2.BackgroundServices
                         {
                             BillPay.Status = Status.Complete;
                             account.Balance -= BillPay.Amount;
+
+                            //add new transaction
                             account.Transactions.Add(
                                 new Transaction
                                 {

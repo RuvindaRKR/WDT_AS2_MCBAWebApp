@@ -24,6 +24,8 @@ namespace SharedUtils
         {
             _smtpSettings = smtpSettings.Value;
         }
+
+        // get the list of recipients , the body and the subject from the method call
         public async Task SendEmail(List<EmailRecipient> recipients,string body,string subject)
         {
             var message = new MimeMessage();
@@ -40,6 +42,8 @@ namespace SharedUtils
             };
             using (var client = new SmtpClient())
             {
+
+                //connect to the smtp server retrieved from the appsettings.json
                 await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, false);
                 await client.AuthenticateAsync(_smtpSettings.SenderEmail, _smtpSettings.Password);
 
@@ -47,6 +51,8 @@ namespace SharedUtils
                 await client.DisconnectAsync(true);
             }
         }
+
+        //build the email body with razor engine
         public async Task<string> BuildBody(string templateStr,object obj)
         {
             return await Task.Run(() => Engine
