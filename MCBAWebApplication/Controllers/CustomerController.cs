@@ -53,7 +53,7 @@ namespace MCBAWebApplication.Controllers
             var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
             var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
 
-            //  add them to viewbag after removing unnecessary accounts 
+            //  remove unnecessary accounts 
             foreach (var account in accounts.ToList())
             {
                 if (account.CustomerID != customerid)
@@ -166,6 +166,7 @@ namespace MCBAWebApplication.Controllers
             var transactionsResult = await transactionsResponse.Content.ReadAsStringAsync();
             var transactions = JsonConvert.DeserializeObject<List<Transaction>>(transactionsResult);
 
+            //  check transaction count for fees
             var transactionCount = 0;
             foreach (var transaction in transactions.ToList())
             {
@@ -238,100 +239,242 @@ namespace MCBAWebApplication.Controllers
             return View(account);
         }
 
-        //public async Task<IActionResult> Transfer(int id)
-        //{
-        //    var accList = _context.Accounts.Where(x => x.AccountNumber != id).Select(x => x.AccountNumber).ToList();
-        //    ViewBag.AccountList = new SelectList(accList, "AccountNumber");
-        //    return View(await _context.Accounts.FindAsync(id));
-        //}
+        public async Task<IActionResult> Transfer(int id)
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Transfer(int id, int AccountNumber, decimal amount)
-        //{
-        //    var account = await _context.Accounts.FindAsync(id);
-        //    var transferAccount = await _context.Accounts.FindAsync(AccountNumber);
-        //    var customer = await _context.Customers.FindAsync(account.CustomerID);
-        //    var transactionCount = _context.Transactions.Where(x => x.TransactionType == TransactionType.Transfer || x.TransactionType == TransactionType.Withdraw).Count();
-        //    decimal fee = 0;
-        //    int chAmount = 0;
+            //  retrieve accounts
+            var accountsResponse = await Client.GetAsync($"api/accounts");
+            if (!accountsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
 
-        //    if (transactionCount > 4)
-        //        fee = 0.2m;
-        //    if (account.AccountType == AccountType.Checking)
-        //        chAmount = 200;
-        //    if (amount <= 0)
-        //        ModelState.AddModelError(nameof(amount), "Amount must be positive.");
-        //    if (amount.HasMoreThanTwoDecimalPlaces())
-        //        ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
-        //    if ((amount + fee + chAmount) > account.Balance)
-        //        ModelState.AddModelError(nameof(amount), "Insufficient Funds.");
-        //    if (transferAccount == null)
-        //        ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
-        //    if (!ModelState.IsValid)
-        //    {
-        //        ViewBag.AccountNumber = AccountNumber;
-        //        ViewBag.Amount = amount;
-        //        return View(account);
-        //    }
+            //  copy account ids of accounts other than the users' to a list 
+            var accList = new List<int>();
+            foreach (var item in accounts.ToList())
+            {
+                if (item.CustomerID != customerid)
+                {
+                    accList.Add(item.AccountNumber);
+                }
+            }
 
-        //    // Note this code could be moved out of the controller, e.g., into the Model.
-        //    if (transactionCount > 4)
-        //    {
-        //        account.Transactions.Add(
-        //        new Transaction
-        //        {
-        //            TransactionType = TransactionType.ServiceCharge,
-        //            Amount = fee,
-        //            TransactionTimeUtc = DateTime.Now
-        //        });
-        //    }
+            ViewBag.AccountList = new SelectList(accList, "AccountNumber");
 
-        //    account.Balance -= (amount + fee);
-        //    account.Transactions.Add(
-        //        new Transaction
-        //        {
-        //            TransactionType = TransactionType.Transfer,
-        //            DestinationAccountNumber = AccountNumber,
-        //            Amount = amount,
-        //            TransactionTimeUtc = DateTime.Now
-        //        });
+            //  retrieve account
+            var accountResponse = await Client.GetAsync($"api/accounts/{id}");
+            if (!accountResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountResult = await accountResponse.Content.ReadAsStringAsync();
+            var account = JsonConvert.DeserializeObject<Account>(accountResult);
 
-        //    transferAccount.Balance += amount;
-        //    transferAccount.Transactions.Add(
-        //        new Transaction
-        //        {
-        //            TransactionType = TransactionType.Transfer,
-        //            Amount = amount,
-        //            TransactionTimeUtc = DateTime.Now
-        //        });
+            return View(account);
+        }
 
-        //    await _context.SaveChangesAsync();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Transfer(int id, int AccountNumber, decimal amount)
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
 
-        //    return RedirectToAction(nameof(Index));
-        //}
+            //  retrieve customer object
+            var customerResponse = await Client.GetAsync($"api/customers/{customerid}");
+            if (!customerResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var customerResult = await customerResponse.Content.ReadAsStringAsync();
+            var customer = JsonConvert.DeserializeObject<Customer>(customerResult);
 
-        //public async Task<IActionResult> Statements()
-        //{
-        //    var accList = await _context.Accounts.Where(x => x.CustomerID == CustomerID).Select(x => x.AccountNumber).ToListAsync();
-        //    ViewBag.AccList = new SelectList(accList, "AccountNumber");
-        //    return View();
-        //}
+            //  retrieve accounts
+            var accountsResponse = await Client.GetAsync($"api/accounts");
+            if (!accountsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+
+            var payerAccount = new Account();
+            var payeeAccount = new Account();
+
+            //  remove unnecessary accounts 
+            foreach (var account in accounts.ToList())
+            {
+                if (account.AccountNumber == id)
+                {
+                    payerAccount = account;
+                }
+                if (account.AccountNumber == AccountNumber)
+                {
+                    payeeAccount = account;
+                }
+
+            }
+
+            // retrieve transactions
+            var transactionsResponse = await Client.GetAsync($"api/transactions");
+            if (!transactionsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var transactionsResult = await transactionsResponse.Content.ReadAsStringAsync();
+            var transactions = JsonConvert.DeserializeObject<List<Transaction>>(transactionsResult);
+
+            //  check transaction count for fees
+            var transactionCount = 0;
+            foreach (var transaction in transactions.ToList())
+            {
+                if (transaction.AccountNumber == payerAccount.AccountNumber)
+                {
+                    if (transaction.TransactionType == TransactionType.Transfer || transaction.TransactionType == TransactionType.Withdraw)
+                    {
+                        transactionCount++;
+                    }
+                }
+            }
+            decimal fee = 0;
+            int chAmount = 0;
+
+            if (transactionCount > 4)
+                fee = 0.2m;
+            if (payerAccount.AccountType == AccountType.Checking)
+                chAmount = 200;
+            if (amount <= 0)
+                ModelState.AddModelError(nameof(amount), "Amount must be positive.");
+            if (amount.HasMoreThanTwoDecimalPlaces())
+                ModelState.AddModelError(nameof(amount), "Amount cannot have more than 2 decimal places.");
+            if ((amount + fee + chAmount) > payerAccount.Balance)
+                ModelState.AddModelError(nameof(amount), "Insufficient Funds.");
+            if (payeeAccount == null)
+                ModelState.AddModelError(nameof(AccountNumber), "Invalid Account ID.");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.AccountNumber = AccountNumber;
+                ViewBag.Amount = amount;
+                return View(payerAccount);
+            }
+
+            //  update account balance
+            payerAccount.Balance -= (amount + fee);
+            var content = new StringContent(JsonConvert.SerializeObject(payerAccount), Encoding.UTF8, "application/json");
+            var response = Client.PutAsync("api/accounts", content).Result;
+            payeeAccount.Balance += (amount + fee);
+            var payeeContent = new StringContent(JsonConvert.SerializeObject(payeeAccount), Encoding.UTF8, "application/json");
+            var payeeResponse = Client.PutAsync("api/accounts", payeeContent).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                //  add transaction to database
+                Transaction transaction =
+                new Transaction
+                {
+                    TransactionType = TransactionType.Transfer,
+                    AccountNumber = payerAccount.AccountNumber,
+                    DestinationAccountNumber = payeeAccount.AccountNumber,
+                    Amount = amount,
+                    TransactionTimeUtc = DateTime.Now
+                };
+
+                var tcontent = new StringContent(JsonConvert.SerializeObject(transaction), Encoding.UTF8, "application/json");
+                var tresponse = Client.PostAsync("api/transactions", tcontent).Result;
+
+                if (transactionCount > 4)
+                {
+                    Transaction feeTransaction =
+                    new Transaction
+                    {
+                        TransactionType = TransactionType.ServiceCharge,
+                        AccountNumber = payerAccount.AccountNumber,
+                        Amount = fee,
+                        TransactionTimeUtc = DateTime.Now
+                    };
+
+                    var ftcontent = new StringContent(JsonConvert.SerializeObject(feeTransaction), Encoding.UTF8, "application/json");
+                    var ftresponse = Client.PostAsync("api/transactions", ftcontent).Result;
+                }
+                if (tresponse.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(payerAccount);
+        }
+
+        public async Task<IActionResult> Statements()
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
+
+            //  retrieve accounts
+            var accountsResponse = await Client.GetAsync($"api/accounts");
+            if (!accountsResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountsResult = await accountsResponse.Content.ReadAsStringAsync();
+            var accounts = JsonConvert.DeserializeObject<List<Account>>(accountsResult);
+
+            //  copy account ids of accounts other than the users' to a list 
+            var accList = new List<int>();
+            foreach (var item in accounts.ToList())
+            {
+                if (item.CustomerID == customerid)
+                {
+                    accList.Add(item.AccountNumber);
+                }
+            }
+
+            ViewBag.AccList = new SelectList(accList, "AccountNumber");
+            return View();
+        }
 
 
-        //public async Task<IActionResult> AccountStatement(int MyAccountNumber, int? page = 1)
-        //{
-        //    var customer = await _context.Customers.FindAsync(CustomerID);
-        //    ViewBag.Customer = customer;
+        public async Task<IActionResult> AccountStatement(int MyAccountNumber, int? page = 1)
+        {
+            //  find current user's CustomerID
+            var name = User.Identity.Name;
+            var applicationUser = await _userManager.FindByNameAsync(name);
+            var customerid = applicationUser.CustomerID;
 
-        //    var account = await _context.Accounts.FindAsync(MyAccountNumber);
-        //    ViewBag.Account = account;
+            //  retrieve customer object
+            var customerResponse = await Client.GetAsync($"api/customers/{customerid}");
+            if (!customerResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var customerResult = await customerResponse.Content.ReadAsStringAsync();
+            var customer = JsonConvert.DeserializeObject<Customer>(customerResult);
+            ViewBag.Customer = customer;
 
-        //    int pageSize = 4;
-        //    var transactionListPaged = await _context.Transactions.Where(x => x.AccountNumber == MyAccountNumber).ToPagedListAsync(page, pageSize);
+            //  retrieve account
+            var accountResponse = await Client.GetAsync($"api/accounts/{MyAccountNumber}");
+            if (!accountResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var accountResult = await accountResponse.Content.ReadAsStringAsync();
+            var account = JsonConvert.DeserializeObject<Account>(accountResult);
+            ViewBag.Account = account;
 
-        //    return View(transactionListPaged);
-        //}
+            //  retrieve transactions
+            var transactionsResponse = await Client.GetAsync($"api/transactions");
+            if (!accountResponse.IsSuccessStatusCode)
+                throw new Exception();
+            var transactionsResult = await transactionsResponse.Content.ReadAsStringAsync();
+            var transactions = JsonConvert.DeserializeObject<List<Transaction>>(transactionsResult);
+
+            //  remove irrelevant transactions
+            foreach (var transaction in transactions.ToList())
+            {
+                if (transaction.AccountNumber != MyAccountNumber)
+                {
+                    transactions.Remove(transaction);
+                }
+            }
+
+            int pageSize = 4;
+            var transactionListPaged = await transactions.ToPagedListAsync((int)page, pageSize);
+
+            return View(transactionListPaged);
+        }
 
         //public async Task<IActionResult> BillPay()
         //{
