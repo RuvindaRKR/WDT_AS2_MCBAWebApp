@@ -1,4 +1,6 @@
 WDT Assignment 2  - MCBA Web Application
+s3804158 - Ruvinda Ranaweera
+s3724928 - Luke Di Guglielmo
 
 Reasoning behind Records
 Changed the BillPay, Transaction and Login classes as Records, since these data does not need to be modified frequently. 
